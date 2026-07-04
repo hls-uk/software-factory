@@ -4,3 +4,11 @@
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+.DS_Store
+node_modules/
+*.log
+
+# Installed skill mirrors are generated — skills/ is the source of truth
+.claude/skills/
+.agents/skills/

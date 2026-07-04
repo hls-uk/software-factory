@@ -1,51 +1,46 @@
-# Agent Instructions
+# Software Factory — Agent Operating Manual
 
-This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
+Higher Level Software's public set of coding-agent skills: the factory loop
+(requirements → plan → orchestrate → verify → learn) packaged as installable
+skills. This file is the source of truth for working in this repo; `CLAUDE.md`
+just points here.
 
-> **Architecture in one line:** Issues live in a local Dolt database
-> (`.beads/dolt/`); cross-machine sync uses `bd dolt push/pull` (a
-> git-compatible protocol), stored under `refs/dolt/data` on your git
-> remote — separate from `refs/heads/*` where your code lives.
-> `.beads/issues.jsonl` is a passive export, not the wire protocol.
->
-> See [SYNC_CONCEPTS.md](https://github.com/gastownhall/beads/blob/main/docs/SYNC_CONCEPTS.md)
-> for the one-screen overview and anti-patterns (don't treat JSONL as the
-> source of truth; don't `bd import` during normal operation; don't
-> reach for third-party Dolt hosting before trying the default).
+## What This Repo Is
 
-## Quick Reference
+- `skills/<name>/SKILL.md` — the product. Ten skills, each self-contained
+  (its own `references/`), installable individually via `npx skills add`.
+- `scripts/validate-skills.mjs` — the quality gate. Run it after every skill
+  edit; CI runs it on every push.
+- `docs/` — this repo's wiki: [index](docs/index.md), append-only
+  [log](docs/log.md), and the [bootstrap brief](docs/BOOTSTRAP-BRIEF.md).
+- `.beads/` — embedded beads work tracking. `bd ready` is the queue.
 
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work atomically
-bd close <id>         # Complete work
-bd dolt push          # Push beads data to remote
-```
+## Rules
 
-## Non-Interactive Shell Commands
+1. **Skills are the source of truth.** Edit `skills/<name>/SKILL.md`, never an
+   installed mirror. Each skill must stay self-contained — no links outside
+   its own directory (installers copy single skill dirs).
+2. **Validate after every skill change:** `node scripts/validate-skills.mjs`
+   must exit 0 before you commit.
+3. **Track work in beads** (see `skills/beads/SKILL.md` — this repo follows
+   its own skills): claim before working, close with evidence.
+4. **Log sessions** in [docs/log.md](docs/log.md) — provenance format
+   (Driven by / Executed by / What changed / Evidence), newest first.
+5. **Session end:** validator green, beads state reported, log entry written,
+   changes committed. Reusable lessons go in the log or a skill fix — an
+   answer that lives only in chat is lost.
+6. **Releases:** every skill change gets a `CHANGELOG.md` line. Feedback from
+   consumer projects arrives via the tracker in `.factory/feedback.json`;
+   process it with `skills/skill-sweep`.
 
-**ALWAYS use non-interactive flags** with file operations to avoid hanging on confirmation prompts.
+## Boundaries
 
-Shell commands like `cp`, `mv`, and `rm` may be aliased to include `-i` (interactive) mode on some systems, causing the agent to hang indefinitely waiting for y/n input.
-
-**Use these forms instead:**
-```bash
-# Force overwrite without prompting
-cp -f source dest           # NOT: cp source dest
-mv -f source dest           # NOT: mv source dest
-rm -f file                  # NOT: rm file
-
-# For recursive operations
-rm -rf directory            # NOT: rm -r directory
-cp -rf source dest          # NOT: cp -r source dest
-```
-
-**Other commands that may prompt:**
-- `scp` - use `-o BatchMode=yes` for non-interactive
-- `ssh` - use `-o BatchMode=yes` to fail instead of prompting
-- `apt-get` - use `-y` flag
-- `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
+- Never publish, push to new remotes, or configure external services without
+  explicit approval.
+- No credentials or secrets in any file, including examples — use
+  placeholders like `<JIRA_BASE_URL>`.
+- Skills must stay agent-neutral (usable from Claude Code, Codex, Cursor,
+  etc.) — no harness-specific instructions unless labeled as variants.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:6cd5cc61 -->
 ## Beads Issue Tracker

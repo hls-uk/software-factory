@@ -1,0 +1,12 @@
+{
+  "_note": "Feedback intake for the skills maintained in THIS repo. Consumer projects copy this file (pointing here) into their own repos per the skill-feedback skill. Placeholders below are set at publish time — never commit credentials.",
+  "tracker": "jira",
+  "baseUrl": "<JIRA_BASE_URL>",
+  "project": "<PROJECT_KEY>",
+  "labels": ["skill-feedback"],
+  "fallback": {
+    "tracker": "github",
+    "repo": "<owner>/software-factory",
+    "labels": ["skill-feedback"]
+  }
+}
