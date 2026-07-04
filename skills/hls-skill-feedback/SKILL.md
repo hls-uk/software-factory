@@ -1,5 +1,5 @@
 ---
-name: skill-feedback
+name: hls-skill-feedback
 description: File structured improvement feedback against the skills repo when an installed skill misfires — wrong instructions, outdated APIs, gaps, or friction. Use whenever a skill's guidance was incorrect or incomplete during real work, when you had to work around a skill, or when you notice a missing skill a project keeps needing.
 ---
 
@@ -76,5 +76,5 @@ become permanent.
 
 This pattern is not exclusive to the central skills repo. A project
 maintaining its own internal skills can point its own `.factory/feedback.json`
-at its own tracker and run skill-sweep against it — the loop is the same at
+at its own tracker and run hls-skill-sweep against it — the loop is the same at
 every level.

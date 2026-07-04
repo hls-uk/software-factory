@@ -1,5 +1,5 @@
 ---
-name: dev-browser
+name: hls-dev-browser
 description: Verify web UIs and automate browsers with dev-browser — sandboxed Playwright scripts, persistent named pages, and screenshot evidence. Use when a story touches a web frontend and needs visual or behavioral verification, when capturing UI evidence for acceptance, or for any scripted browser automation during development.
 ---
 

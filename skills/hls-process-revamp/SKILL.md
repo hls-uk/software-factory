@@ -1,5 +1,5 @@
 ---
-name: process-revamp
+name: hls-process-revamp
 description: Revamp an existing repo's engineering process to take full advantage of agentic delivery — audit what exists, map gaps against the factory target state, and adopt incrementally without steamrolling working conventions. Use on established codebases adopting agent-driven workflows, or when a repo's agent process has drifted or underperforms.
 ---
 
@@ -44,11 +44,11 @@ and revertible:
 
 1. Stabilize gates (make test/lint/build green and documented).
 2. Agent entrypoint + docs/process.md (operating mode, gates, rituals — use
-   the process-init skill's template).
-3. Work tracking + wiki (beads init; repo-bootstrap's wiki layer; backfill
+   the hls-process-init skill's template).
+3. Work tracking + wiki (beads init; hls-repo-bootstrap's wiki layer; backfill
    only the decisions that still bind — not history for its own sake).
 4. Skills install + feedback config.
-5. First orchestrated story end-to-end (the proof — same bar as process-init:
+5. First orchestrated story end-to-end (the proof — same bar as hls-process-init:
    a process that has never executed is a hypothesis).
 
 ## 3. Confirm, then apply

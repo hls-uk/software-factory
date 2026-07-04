@@ -1,5 +1,5 @@
 ---
-name: repo-bootstrap
+name: hls-repo-bootstrap
 description: Bootstrap a new repo — software project or any knowledge work — with the LLM Wiki pattern and a compounding-learning loop, so every agent session leaves the repo smarter. Sets up the wiki (index, log, decisions, learnings), thin agent entrypoints (AGENTS.md/CLAUDE.md), and the session rituals that make knowledge accumulate. Use when creating a repo, or when an existing repo has no durable agent memory.
 ---
 
@@ -18,7 +18,7 @@ lost**.
 ## 1. Ask What Layer This Repo Is
 
 - **Project repo** (software or knowledge work) — the common case; scaffold
-  below. For software, follow with the process-init skill for the delivery
+  below. For software, follow with the hls-process-init skill for the delivery
   process; this skill provides the knowledge substrate.
 - **Shared playbook** (conventions/skills reused across projects) — same
   scaffold, plus versioning (`VERSION`, `CHANGELOG.md`) so consumers can track
@@ -94,7 +94,7 @@ ledger:
   (may be generic), `project-only`, `promoted`, or `rejected` (kept, so the
   reasoning isn't re-litigated). On a cadence (weekly early on, monthly at
   steady state) run a **gardening pass**: triage candidates, promote what's
-  generic into skills or process docs — via the skill-feedback skill when the
+  generic into skills or process docs — via the hls-skill-feedback skill when the
   improvement belongs upstream — and mark them `promoted`. An untriaged old
   candidate is a lint finding, not a silent loss.
 

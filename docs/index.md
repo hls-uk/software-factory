@@ -14,12 +14,12 @@ page add or rename.
 ## Process
 
 - [CHANGELOG](../CHANGELOG.md) — released skill changes, newest first.
-- Work queue: `bd ready` (beads, embedded — see `skills/beads/SKILL.md`).
+- Work queue: `bd ready` (beads, embedded — see `skills/hls-beads/SKILL.md`).
 - Feedback intake: `.factory/feedback.json` → processed by
-  `skills/skill-sweep`.
+  `skills/hls-skill-sweep`.
 
 ## Decisions
 
 Recorded inline in [log.md](log.md) entries (type `decision`) until volume
-justifies a `decisions/` directory — see the repo-bootstrap skill's
+justifies a `decisions/` directory — see the hls-repo-bootstrap skill's
 "structure emerges from need" rule.

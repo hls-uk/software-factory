@@ -1,5 +1,5 @@
 ---
-name: factory-orchestrate
+name: hls-factory-orchestrate
 description: Run the software factory as the top-level coordinating agent — take a confirmed requirements set and deliver it to production quality by dispatching whole stories to implementing agents (e.g. Codex at xhigh reasoning) via /goal handoffs, verifying every result locally, and looping for hours or days until every acceptance criterion has evidence. Use when asked to coordinate, orchestrate, or autonomously deliver a planned body of work.
 ---
 
@@ -14,9 +14,9 @@ proof — not when the queue looks busy.
 ## Preconditions
 
 - A confirmed requirements doc (`docs/requirements/<slug>.md`) — else run
-  requirements-interview.
+  hls-requirements-interview.
 - A plan with per-story verification (`docs/plans/<slug>-plan.md`) and a beads
-  graph — else run plan-builder.
+  graph — else run hls-plan-builder.
 - Working local verification: the test/lint/build commands in the plan run
   green on main before you dispatch anything. Fix the harness first otherwise.
 
@@ -76,7 +76,7 @@ Repeat until done:
   the whole history.
 - **Empty queue ≠ done.** When `bd ready` is empty but acceptance criteria
   remain unticked, run a gap analysis: parked stories, unmet criteria, missing
-  stories. Feed gaps back through plan-builder and continue.
+  stories. Feed gaps back through hls-plan-builder and continue.
 - **Done means evidence.** Finish only when every acceptance criterion in the
   requirements doc maps to closed stories with verification evidence, the full
   suite is green on main, and the log records it. Elapsed time, effort, and
@@ -90,7 +90,7 @@ Repeat until done:
   destructive/irreversible operations, production deploys, publishing,
   external-service configuration, credential handling.
 - Blocked >30 minutes on one story: park it with a note and move on.
-- Respect the repo's operating mode (see process-init): fully-autonomous VPS
+- Respect the repo's operating mode (see hls-process-init): fully-autonomous VPS
   mode widens what you verify-and-proceed on; supervised MacBook mode narrows
   it. When unstated, assume supervised.
 

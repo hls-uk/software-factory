@@ -1,5 +1,5 @@
 ---
-name: beads
+name: hls-beads
 description: Manage work with the beads issue tracker (bd) in embedded mode — ready queue, claiming, dependencies, evidence-based closes, and multi-machine sync. Use whenever a repo tracks agent work in beads, when setting up work tracking for a new project, or when coordinating multiple agent sessions on one backlog.
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: requirements-interview
+name: hls-requirements-interview
 description: Build requirements by interviewing the user — structured questioning, assumption surfacing, and a requirements doc with numbered, testable acceptance criteria. Use when a feature request, product idea, or project brief is underspecified, before planning or implementation begins, or when asked to "gather requirements" or "write a spec".
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: plan-builder
+name: hls-plan-builder
 description: Turn a confirmed requirements doc into an implementation plan — design decisions with rationale, stories sized for one-agent handoff, each with dependencies and its own verification — and register the stories as a beads dependency graph. Use after requirements are confirmed and before implementation or orchestration begins.
 ---
 
@@ -13,7 +13,7 @@ proves itself done.
 
 1. **Read the requirements doc** (`docs/requirements/<slug>.md`). If its status
    is not `confirmed` or it has open questions, stop and run the
-   requirements-interview loop first — planning against draft requirements
+   hls-requirements-interview loop first — planning against draft requirements
    compounds guesswork.
 
 2. **Investigate the ground truth.** For `mode: existing`, study the codebase:

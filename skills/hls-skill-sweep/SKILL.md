@@ -1,11 +1,11 @@
 ---
-name: skill-sweep
+name: hls-skill-sweep
 description: Sweep the feedback tracker for skill-feedback issues, triage them, apply the fixes to the skills in this repo, validate, and release — closing each issue with evidence. Use on a maintenance cadence (weekly) or on demand in a repo that maintains skills, whether the central skills repo or a project's internal one.
 ---
 
 # Skill Sweep
 
-The consuming half of the feedback loop: skill-feedback files defects from the
+The consuming half of the feedback loop: hls-skill-feedback files defects from the
 field; this skill turns them into released fixes. Run it in the repo that owns
 the skills.
 
@@ -61,6 +61,6 @@ the skills.
 
 Any repo that maintains internal skills can run this loop: point its
 `.factory/feedback.json` at its own tracker, let its projects file with
-skill-feedback, and sweep on a cadence. Improvements that prove generic can
+hls-skill-feedback, and sweep on a cadence. Improvements that prove generic can
 then be re-filed upstream to the central skills repo — the same loop, one
 level up.

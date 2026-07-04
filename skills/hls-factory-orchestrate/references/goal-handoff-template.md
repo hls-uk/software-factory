@@ -41,7 +41,7 @@ goal stands.
 ## Rules
 
 - One story per goal. If a story won't fit the template, it's too big — send
-  it back through plan-builder.
+  it back through hls-plan-builder.
 - Never include secrets in goal text; name the env var or config path instead.
 - The verify section quotes commands that already run in this repo — an
   implementer should never have to invent its own definition of done.

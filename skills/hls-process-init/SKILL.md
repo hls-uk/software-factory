@@ -1,5 +1,5 @@
 ---
-name: process-init
+name: hls-process-init
 description: Initialise a new repo's engineering process to run as an agentic software factory — operating mode (fully autonomous on a VPS or supervised on a workstation), work tracking, LLM wiki, verification gates, evidence conventions, and agent entrypoints. Use when starting a repo that agents will build in, or when asked to "set up the process" for agent-driven delivery.
 ---
 
@@ -31,16 +31,16 @@ irreversible or outward-facing actions without standing authorization.
 
 In order, each verified before the next:
 
-1. **Knowledge base** — run the repo-bootstrap skill: wiki (`index.md`,
+1. **Knowledge base** — run the hls-repo-bootstrap skill: wiki (`index.md`,
    `log.md`), decisions, learnings ledger, agent entrypoints
    (AGENTS.md/CLAUDE.md). This is the repo's memory; everything else logs
    into it.
-2. **Work tracking** — run the beads skill's setup (`bd init`, embedded).
+2. **Work tracking** — run the hls-beads skill's setup (`bd init`, embedded).
 3. **Skills** — install the factory skills where agents discover them:
    `npx skills add <owner>/<skills-repo>` (all agents), and commit the
    install choice to the repo docs so future sessions repeat it.
 4. **Feedback loop** — create `.factory/feedback.json` pointing at the
-   tracker that owns skill improvements (see the skill-feedback skill).
+   tracker that owns skill improvements (see the hls-skill-feedback skill).
    Leave credentials out; name the access mechanism.
 5. **Verification harness** — the factory cannot run without executable
    gates. Ensure `test`, `lint`, and `build` commands exist and run green

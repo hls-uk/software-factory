@@ -20,7 +20,7 @@ stops below.
 
 ## The Loop
 
-requirements-interview → plan-builder → factory-orchestrate → (per story)
+hls-requirements-interview → hls-plan-builder → hls-factory-orchestrate → (per story)
 implement → verify → evidence → close.
 
 ## Verification Gates
@@ -58,6 +58,6 @@ provisioned. <Add repo-specific stops.>
 
 ## Skill Feedback
 
-When an installed skill misfires, file per the skill-feedback skill.
+When an installed skill misfires, file per the hls-skill-feedback skill.
 Tracker config: `.factory/feedback.json`.
 ```
