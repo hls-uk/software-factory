@@ -1,6 +1,14 @@
 # Log
 
-## [2026-07-04 10:00 BST] setup | Repo bootstrapped: 10 skills, validator, wiki, tracking
+## [2026-07-04 10:55 BST] sync | Published public: github.com/hls-uk/software-factory
+- Driven by: Adam (confirmed publish + owner/name interactively)
+- Executed by: Claude
+- What changed: Created the public GitHub repo, pushed main, pushed beads
+  data (`bd dolt push`). Feedback config's GitHub fallback now points at
+  hls-uk/software-factory (Jira fields remain placeholders until configured).
+- Evidence: `npx skills add hls-uk/software-factory --list` discovers all 10
+  skills from the public repo; CI validate run 28701092149 → success. All 15
+  bootstrap beads issues closed with evidence (`bd list`).
 - Driven by: Adam
 - Executed by: Claude
 - What changed: Bootstrapped this repo from empty per
