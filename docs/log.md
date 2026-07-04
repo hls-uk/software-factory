@@ -1,5 +1,19 @@
 # Log
 
+## [2026-07-04 12:00 BST] workflow | v0.2.0: hls- prefix, PR review stage, operating guide
+- Driven by: Adam (three requested upgrades)
+- Executed by: Claude
+- What changed: (1) all skills renamed `hls-*` for grouping — tracker labels
+  and bd-managed blocks deliberately kept unprefixed; (2) the orchestrator's
+  story loop now lands every story as a PR and runs a bounded review:
+  independent reviewer, blocker vs non-blocker findings, rework beads,
+  delta-only follow-ups, three-round cap, coordinator decides at the cap;
+  (3) new running-the-factory guide (launch via Claude `/goal`//`/loop`,
+  Codex `/goal`, headless VPS) and the `.factory/agents.json` role-assignment
+  convention, scaffolded by hls-process-init.
+- Evidence: validator 10/10 green; local install re-test discovers all
+  hls-* names; CHANGELOG 0.2.0.
+
 ## [2026-07-04 10:55 BST] sync | Published public: github.com/hls-uk/software-factory
 - Driven by: Adam (confirmed publish + owner/name interactively)
 - Executed by: Claude

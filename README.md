@@ -24,7 +24,7 @@ offers to install into your eve building agent.
 |---|---|
 | [hls-requirements-interview](skills/hls-requirements-interview/SKILL.md) | Build requirements by interviewing the user — testable acceptance criteria, surfaced assumptions. |
 | [hls-plan-builder](skills/hls-plan-builder/SKILL.md) | Requirements → stories sized for one-agent handoff, each with its own verification, registered as a beads graph. |
-| [hls-factory-orchestrate](skills/hls-factory-orchestrate/SKILL.md) | The long-running coordinator: dispatch whole stories to implementing agents via `/goal`, verify locally, loop for days until every criterion has evidence. |
+| [hls-factory-orchestrate](skills/hls-factory-orchestrate/SKILL.md) | The long-running coordinator: dispatch whole stories to implementing agents via `/goal`, verify locally, run each PR through a bounded review, loop for days until every criterion has evidence. |
 
 **Substrate**
 
@@ -47,14 +47,27 @@ offers to install into your eve building agent.
 
 An agent in a consumer project runs `hls-requirements-interview`, then
 `hls-plan-builder`, then hands the plan to `hls-factory-orchestrate`, which dispatches
-stories to implementing agents and verifies each against local gates
-(`dev-browser` for UI), tracking everything in `beads`. When a skill misfires
+stories to implementing agents, verifies each against local gates
+(`dev-browser` for UI), and puts every story through a bounded PR review —
+blockers fixed, follow-ups delta-only, capped rounds — tracking everything in
+`beads`. When a skill misfires
 along the way, `hls-skill-feedback` files it here; `hls-skill-sweep` turns those
 reports into released fixes. `hls-repo-bootstrap` and `hls-process-init`/
 `hls-process-revamp` set new and existing repos up to run this way.
 
 Stack defaults where skills need one: NestJS (backend), React + TanStack +
 Tailwind (frontend) — defaults, not mandates.
+
+## Running the Factory
+
+Launch the coordinator with a durable directive — `/goal` (or `/loop` for
+recurring sweeps) in Claude Code, `/goal` in Codex, or headless
+(`claude -p` / `codex exec`) on a VPS. Agent roles — who coordinates, who
+implements, who reviews, and the exact dispatch commands — live in the host
+repo's `.factory/agents.json`, scaffolded by `hls-process-init`. Full guide:
+[running-the-factory](skills/hls-factory-orchestrate/references/running-the-factory.md);
+review rules:
+[review-protocol](skills/hls-factory-orchestrate/references/review-protocol.md).
 
 ## Development
 

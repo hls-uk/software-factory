@@ -21,10 +21,11 @@ Verify: <the story's exact verification commands>. All must pass locally
 before you report done. <For UI: capture dev-browser screenshots to
 evidence/<date>-story-<N>/.>
 
-Done/stop: done when verification passes and the diff is committed to
-<branch> with a summary of evidence. Stop and report instead of guessing if
-you need credentials, hit a design contradiction, or must touch out-of-scope
-files.
+Done/stop: done when verification passes, the diff is committed to <branch>,
+and a PR is opened (push the branch and say so if you cannot open PRs) with a
+summary of evidence in its description. Stop and report instead of guessing
+if you need credentials, hit a design contradiction, or must touch
+out-of-scope files.
 ```
 
 ## On a bounce (retry after failed verification)

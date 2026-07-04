@@ -21,7 +21,8 @@ stops below.
 ## The Loop
 
 hls-requirements-interview → hls-plan-builder → hls-factory-orchestrate → (per story)
-implement → verify → evidence → close.
+implement → verify → PR review (bounded, delta-only follow-ups) → evidence →
+close.
 
 ## Verification Gates
 
@@ -40,9 +41,12 @@ Intent lives in docs/requirements and docs/plans; beads carries readiness.
 
 ## Dispatch
 
-Implementing agents are launched via: `<command / mechanism>`
+Agent roles (coordinator / implementer / reviewer) and their dispatch
+commands are defined in `.factory/agents.json` — that file is authoritative;
+this section records the same choices for humans.
 Coordinator model: <e.g. strongest available Claude>; implementer:
-<e.g. Codex at xhigh reasoning>.
+<e.g. Codex at xhigh reasoning>; reviewer: <independent agent — never the
+implementer>.
 
 ## Session Rituals
 
