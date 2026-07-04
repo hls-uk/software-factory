@@ -18,6 +18,9 @@ exists.
   defaults chain.
 - hls-process-init: scaffolds `.factory/agents.json`; process template's loop
   and dispatch sections reflect the review stage and role config.
+- Fix: untracked `.agents/skills/` (bd's generated mirror, committed by
+  `bd init` before the gitignore existed) — installers now discover exactly
+  the ten `hls-*` skills.
 
 ## 0.1.0 — 2026-07-04
 
