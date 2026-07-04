@@ -6,7 +6,7 @@
   "labels": ["skill-feedback"],
   "fallback": {
     "tracker": "github",
-    "repo": "<owner>/software-factory",
+    "repo": "hls-uk/software-factory",
     "labels": ["skill-feedback"]
   }
 }
