@@ -32,9 +32,12 @@ Repeat until done:
 
 1. **Pick.** Sync beads if the repo is multi-session (`bd dolt pull`), then
    `bd ready --json`; claim the highest-priority ready story
-   (`bd update <id> --claim`). Work one story at a time by default; run
-   independent stories in parallel worktrees only when verification resources
-   allow, and never more than three in flight.
+   (`bd update <id> --claim`). Fill every open implementer lane from the
+   ready queue — lanes, caps, and the capacity checks (provider not cooling,
+   host has headroom) are defined in
+   [references/parallel-dispatch.md](references/parallel-dispatch.md).
+   Defaults: one Claude + one Codex lane on an autonomous VPS, a single lane
+   on a supervised workstation; never more than three stories in flight.
 
 2. **Hand off.** Create the story's worktree from fresh main and dispatch the
    implementer *into* it (see Worktree Rules below):
@@ -63,8 +66,9 @@ Repeat until done:
 
 3. **Verify — never on trust.** When the implementer reports done, run the
    story's verification yourself *inside the story's worktree*: the plan's
-   exact commands, the full test suite, lint/build, and dev-browser evidence
-   for anything UI-facing. Check the diff for scope violations — files
+   exact commands, affected tests, lint/build, and dev-browser evidence
+   for anything UI-facing (the full suite runs on main after merge, not
+   per-worktree — see step 5). Check the diff for scope violations — files
    outside the story's scope, deleted tests, weakened assertions, and any
    change outside the worktree (there must be none; the coordinator checkout
    must still be clean on main). Gates failing → bounce straight back to the
@@ -85,11 +89,14 @@ Repeat until done:
    land as P3 beads or PR notes and the review is still a pass.
 
 5. **Accept or park.**
-   - **Accept:** merge the PR per the repo's process, then retire the
-     worktree — `git worktree remove .worktrees/<slug>` and delete the local
-     branch. Close the story bead with evidence (commands run, results,
-     evidence paths, PR link, review rounds used), tick the criteria it
-     covers in the plan's coverage table.
+   - **Accept:** merge the PR per the repo's process, run the **full suite on
+     main** in your own checkout — a failure there is P0: revert or fix
+     forward before any new dispatch. Then retire the story: drop its
+     resource lease (drop its database, free its port block),
+     `git worktree remove .worktrees/<slug>`, delete the local branch. Close
+     the story bead with evidence (commands run, results, evidence paths, PR
+     link, review rounds used), tick the criteria it covers in the plan's
+     coverage table.
    - **Park** (verification bounced 3×, or review cap hit): push the branch
      so the state is safe on the remote, remove the worktree, and record the
      branch name in the bead — unparking recreates the worktree from the
@@ -121,6 +128,26 @@ gone wrong.
   push branch, remove worktree, branch name in the bead. A worktree with no
   open story bead is an orphan — remove it.
 
+## Lanes & Capacity
+
+Parallelism and its governors live in
+[references/parallel-dispatch.md](references/parallel-dispatch.md); the
+invariants:
+
+- Two governors gate every dispatch: **LLM capacity** (the lane's provider
+  isn't cooling on usage limits) and **host capacity** (load, memory, disk
+  thresholds). Scale by not starting work — never by killing running work.
+- Subscriptions are shared with other hosts: a usage ledger
+  (`.factory/usage.jsonl`) paces dispatches, but live limit signals are the
+  truth. On a limit: mark the provider cooling, shift the queue to healthy
+  lanes; all lanes cooling → checkpoint and pause until a window resets.
+- **Quality never downgrades.** Production code is written by top-tier
+  models; when none is available, the factory waits — it does not
+  substitute.
+- Every story holds a resource lease (port block, own database on the shared
+  Postgres) recorded in `.worktrees/<slug>/.env.story` — granted at
+  dispatch, dropped at retirement.
+
 ## Long-Run Discipline
 
 - **All state lives in beads + docs, never only in your context.** Resume
@@ -137,6 +164,9 @@ gone wrong.
   requirements doc maps to closed stories with verification evidence, the full
   suite is green on main, and the log records it. Elapsed time, effort, and
   "the agent said so" are not completion.
+- **Usage limits are weather, not failure.** Cooling providers, pauses, and
+  window-boundary resumes are normal operation — log them, checkpoint, and
+  let the resume ritual pick the run back up.
 
 ## Escalation & Stops
 

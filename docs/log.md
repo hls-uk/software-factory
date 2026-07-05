@@ -1,5 +1,24 @@
 # Log
 
+## [2026-07-05 11:00 BST] workflow | v0.4.0: parallel lanes, usage governance, resource leases
+- Driven by: Adam (four design choices confirmed interactively)
+- Executed by: Claude
+- What changed: implementer pool with parallel lanes (VPS 1 Claude + 1
+  Codex, workstation 1); two dispatch governors (provider cooling state,
+  host load/mem/disk); usage ledger advisory + live limit signals
+  authoritative — shift-provider-then-pause, never model downgrade for
+  production code; per-story resource leases (port blocks, story_<slug> DBs
+  on shared host Postgres, .env.story); verify split (story-scoped in
+  worktree, full suite on main post-merge, main failure = P0); plan-builder
+  Resources line + idempotent/parallel-safe verification contract;
+  process-init local-first/parallel-safe/idempotent gate properties.
+- Decisions: reactive limit signals beat any local ledger because
+  subscriptions are shared across hosts; scale by not starting, never by
+  killing; namespaced shared services (one Postgres, many DBs) over
+  per-story docker stacks.
+- Evidence: validator 10/10 green; CHANGELOG 0.4.0; new
+  references/parallel-dispatch.md.
+
 ## [2026-07-05 09:30 BST] workflow | v0.3.0: formal worktree lifecycle for story work
 - Driven by: Adam (proposed; three design choices confirmed interactively)
 - Executed by: Claude

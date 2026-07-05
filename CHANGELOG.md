@@ -3,6 +3,30 @@
 Newest first. One line per skill change, linking the feedback issue where one
 exists.
 
+## 0.4.0 — 2026-07-05
+
+- hls-factory-orchestrate: parallel implementer lanes. `.factory/agents.json`
+  v2 defines an implementer pool (defaults: VPS = one Claude Opus-class +
+  one Codex xhigh lane, workstation = one lane); every dispatch is gated by
+  two governors — provider health and host capacity (load/memory/disk) —
+  detailed in new `references/parallel-dispatch.md`.
+- Usage-limit awareness: advisory dispatch ledger (`.factory/usage.jsonl`)
+  plus authoritative live limit signals; on a limit the provider cools and
+  the queue shifts lanes; all lanes cooling → checkpoint and pause until a
+  window resets (subscriptions shared with other hosts are assumed).
+  Quality never downgrades — the factory waits rather than substituting a
+  weaker model.
+- Resource leases: per-story port blocks and per-story databases on a single
+  shared host Postgres, recorded in `.worktrees/<slug>/.env.story`, dropped
+  at retirement.
+- Verify scope: story-scoped + affected tests in the worktree; full suite on
+  main after each merge (failure is P0).
+- hls-plan-builder: stories declare a Resources line; verification must be
+  idempotent and parallel-safe (env-based ports/URLs, reset-own-state).
+- hls-process-init: gates gain three hard properties — local-first,
+  parallel-safe, idempotent; process template gains a Shared Verification
+  Resources section.
+
 ## 0.3.0 — 2026-07-05
 
 - hls-factory-orchestrate: formal worktree lifecycle. Story work always

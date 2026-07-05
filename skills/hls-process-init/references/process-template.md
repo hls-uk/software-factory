@@ -28,11 +28,23 @@ close.
 
 Run all of these locally before any story is accepted:
 
-- Tests: `<command>`
+- Tests: `<command>` (story-scoped + affected tests in the worktree;
+  full suite on main after each merge — a main failure is P0)
 - Lint: `<command>`
 - Build: `<command>`
 - UI evidence (when frontend changed): dev-browser checks +
   screenshots into `evidence/<date>-<story>/`
+
+All gates run on a laptop with no cloud dependency; they are idempotent and
+parallel-safe (ports and connection strings from env only).
+
+## Shared Verification Resources
+
+- Postgres: single host instance; one database per story
+  (`story_<slug>`), leased/dropped by the orchestrator, injected as
+  `DATABASE_URL`.
+- Ports: leased per story as `PORT`/`PORT_BASE` — never hardcoded.
+- <other shared services and their namespacing scheme>
 
 ## Work Tracking
 

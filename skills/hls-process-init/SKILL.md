@@ -48,6 +48,17 @@ In order, each verified before the next:
 5. **Verification harness** — the factory cannot run without executable
    gates. Ensure `test`, `lint`, and `build` commands exist and run green
    (even if the suite is one smoke test), and record them in the process doc.
+   Three hard properties, designed in from day one:
+   - **Local-first:** every gate runs on a laptop with no cloud dependency —
+     anything that can't gets a fake/stub or is non-gating. Deployment shape
+     must never demote the local loop; it is what code-change throughput
+     lives on.
+   - **Parallel-safe:** ports and connection strings come from env
+     (`PORT`, `DATABASE_URL`), never hardcoded. Shared services are
+     namespaced, not duplicated — one host Postgres with a database per
+     story beats a docker stack per story.
+   - **Idempotent:** verification resets its own state first and is safe to
+     re-run at any time.
    For stacks: default to NestJS (backend) and React + TanStack + Tailwind
    (frontend) unless the requirements say otherwise — defaults, not mandates.
 6. **Evidence convention** — create `evidence/` with a one-line README:

@@ -59,6 +59,12 @@ proves itself done.
   in separate worktrees. If they'd conflict, add the dependency.
 - Verification is executable now, not aspirational: if a story's check needs
   infrastructure that doesn't exist, there's a missing story in front of it.
+- Verification is idempotent and parallel-safe: commands reset the story's
+  own state first (its own database, its own fixtures), take ports and
+  connection strings from the environment (`PORT`, `DATABASE_URL` — the
+  orchestrator leases them per story), never hardcode shared resources, and
+  can run alongside other stories' verification without interference.
+  Declare what each story needs in its Resources line.
 - The riskiest story runs earliest. Front-load unknowns; back-load polish.
 - Include a "story 0" when needed: scaffold, CI, test harness — the things
   that make every later story's verification possible.

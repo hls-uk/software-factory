@@ -64,8 +64,16 @@ Launch the coordinator with a durable directive — `/goal` (or `/loop` for
 recurring sweeps) in Claude Code, `/goal` in Codex, or headless
 (`claude -p` / `codex exec`) on a VPS. Agent roles — who coordinates, who
 implements, who reviews, and the exact dispatch commands — live in the host
-repo's `.factory/agents.json`, scaffolded by `hls-process-init`. Full guide:
+repo's `.factory/agents.json`, scaffolded by `hls-process-init`.
+Implementers run as parallel lanes (typically one Claude + one Codex, so
+both subscriptions earn at once), governed by usage-limit awareness — cooling
+providers shift the queue, exhausted windows pause the run and resume at the
+boundary — and by host capacity checks, with per-story resource leases
+(ports, own database on a shared Postgres) keeping parallel verification
+cheap and local-first. Full guide:
 [running-the-factory](skills/hls-factory-orchestrate/references/running-the-factory.md);
+scaling and limits:
+[parallel-dispatch](skills/hls-factory-orchestrate/references/parallel-dispatch.md);
 review rules:
 [review-protocol](skills/hls-factory-orchestrate/references/review-protocol.md).
 

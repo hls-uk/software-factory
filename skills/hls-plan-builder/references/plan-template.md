@@ -33,7 +33,10 @@ updated: YYYY-MM-DD
 - **Depends on:** Story 0
 - **Scope:** <files/areas to touch; what must not break>
 - **Approach:** 2–5 bullets, enough to keep an implementer on the rails.
-- **Verification:** <exact commands / dev-browser checks / evidence to capture>
+- **Resources:** <db / ports / services verification needs — all from env,
+  leased per story by the orchestrator; "none" if pure>
+- **Verification:** <exact commands / dev-browser checks / evidence to
+  capture — idempotent and parallel-safe>
 - **Done when:** <observable condition tying back to the ACs>
 
 ### Story 2: ...

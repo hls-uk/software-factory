@@ -39,30 +39,17 @@ analysis) that cheaper models fumble.
 
 ## Agent Role Assignment
 
-Roles live in the host repo at `.factory/agents.json`. Example:
-
-```json
-{
-  "coordinator": {
-    "harness": "claude-code",
-    "model": "<strongest available, e.g. claude-fable-5>",
-    "launch": "/goal via hls-factory-orchestrate"
-  },
-  "implementer": {
-    "harness": "codex",
-    "dispatch": "codex exec --model gpt-5.5-codex -c model_reasoning_effort=\"xhigh\" \"$(cat goal.txt)\""
-  },
-  "reviewer": {
-    "harness": "claude-code",
-    "dispatch": "claude -p \"$(cat review-prompt.txt)\"",
-    "note": "must not be the implementer; cross-vendor pairing catches more"
-  }
-}
-```
+Roles live in the host repo at `.factory/agents.json`. Implementers are a
+**pool of lanes** — typically one Claude lane (Opus-class) and one Codex
+lane (GPT-5.5 xhigh) running stories in parallel, so both subscriptions are
+earning at once. Full schema, defaults (VPS = 1+1 lanes, workstation = 1),
+usage-limit handling, and host thresholds:
+[parallel-dispatch.md](parallel-dispatch.md).
 
 `dispatch` is the literal command the coordinator runs (goal/prompt text
 substituted). Any harness/CLI works if it can take a prompt and work a
-branch.
+branch. The reviewer must not be the implementer of the story under review;
+cross-vendor pairing catches more.
 
 ## Where Defaults Live
 
@@ -74,7 +61,8 @@ Precedence, most specific wins:
    operating mode; keep the two consistent.
 3. The skill defaults — what this skill assumes when neither exists:
    coordinator = the strongest model in the session you launched from;
-   implementer = `codex exec` at xhigh (command in the SKILL.md);
+   implementers = one Claude (Opus-class) lane + one Codex (xhigh) lane on a
+   VPS, a single lane on a workstation;
    reviewer = a fresh session of the coordinator's harness.
 
 Cross-vendor role pairing (e.g. Claude coordinates and reviews, Codex
@@ -114,3 +102,8 @@ details:
 - Watch spend: one story = one implementer dispatch + gates + at most three
   review rounds. If a story is burning multiples of that, it's a plan
   problem — park and re-plan rather than paying for grind.
+- Expect usage-limit weather: providers cool, the queue shifts lanes, and
+  the run pauses/resumes at window boundaries (see
+  [parallel-dispatch.md](parallel-dispatch.md)). For headless VPS runs, pair
+  the launch with a 30–60 min cron relaunch — a relaunch during a cooling
+  window sees nothing workable and exits cheaply.
