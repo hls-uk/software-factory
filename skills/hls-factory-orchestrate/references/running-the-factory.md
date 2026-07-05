@@ -83,6 +83,25 @@ modes catches what the implementer's own family misses. Same-vendor works;
 prefer separation of *sessions* at minimum — an agent must never review its
 own diff.
 
+## Worktrees in Practice
+
+The lifecycle rules live in the SKILL.md (Worktree Rules); the operational
+details:
+
+- Each worktree needs its own dependency install (`npm ci` in the worktree
+  after `git worktree add`). With pnpm this is nearly free (shared content-
+  addressed store) — worth preferring in repos built for the factory. Budget
+  the install time into story dispatch either way.
+- Worktrees share the repo's object store — creating one is cheap and does
+  not duplicate history. Disk cost is the checkout plus `node_modules`.
+- beads supports worktrees natively: `bd` run inside a worktree finds the
+  main repo's `.beads/` via a redirect file. Beads mutations still belong to
+  the coordinator, not implementers.
+- Port collisions: two stories running dev servers in parallel worktrees
+  will fight over default ports. The story's verification commands should
+  set distinct ports (or the plan should not parallelize two
+  server-occupying stories).
+
 ## Practical Notes for Days-Long Runs
 
 - Run the coordinator where the verification gates run (same machine/VPS) —

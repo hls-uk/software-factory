@@ -52,7 +52,11 @@ In order, each verified before the next:
    (frontend) unless the requirements say otherwise — defaults, not mandates.
 6. **Evidence convention** — create `evidence/` with a one-line README:
    dated subdirectories per story, screenshots and verification write-ups.
-7. **CI** — a workflow that runs the verification commands on every push.
+7. **Worktree convention** — add `.worktrees/` to `.gitignore`. Story work
+   happens in coordinator-managed worktrees there (branch `story/<slug>`,
+   dir `.worktrees/<slug>`); the main checkout never does story work. Rules:
+   the hls-factory-orchestrate skill's Worktree Rules section.
+8. **CI** — a workflow that runs the verification commands on every push.
 
 ## 3. Write the Process Doc
 

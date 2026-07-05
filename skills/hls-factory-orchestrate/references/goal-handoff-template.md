@@ -8,11 +8,14 @@ stays in the plan doc; the goal points at it.
 /goal Complete Story <N> (<name>) from docs/plans/<slug>-plan.md — read that
 story entry first; it is the spec.
 
-Context: branch <branch>; covers acceptance criteria <numbers> of
-docs/requirements/<slug>.md. <One sentence of state the agent can't infer.>
+Context: you are in worktree .worktrees/<slug> on branch story/<slug> —
+treat this directory as the repo root and never write outside it. Covers
+acceptance criteria <numbers> of docs/requirements/<slug>.md. <One sentence
+of state the agent can't infer.>
 
-Scope: <files/areas from the story>. Do not touch anything outside it; do not
-modify tests except to add coverage for this story.
+Scope: <files/areas from the story>. Do not touch anything outside it; do
+not modify tests except to add coverage for this story; do not create,
+remove, or switch worktrees or branches.
 
 Preserve: <what must not break — existing behavior, API contracts, passing
 suite>.
@@ -21,11 +24,11 @@ Verify: <the story's exact verification commands>. All must pass locally
 before you report done. <For UI: capture dev-browser screenshots to
 evidence/<date>-story-<N>/.>
 
-Done/stop: done when verification passes, the diff is committed to <branch>,
-and a PR is opened (push the branch and say so if you cannot open PRs) with a
-summary of evidence in its description. Stop and report instead of guessing
-if you need credentials, hit a design contradiction, or must touch
-out-of-scope files.
+Done/stop: done when verification passes, the diff is committed to
+story/<slug>, and a PR is opened (push the branch and say so if you cannot
+open PRs) with a summary of evidence in its description. Stop and report
+instead of guessing if you need credentials, hit a design contradiction, or
+must touch out-of-scope files.
 ```
 
 ## On a bounce (retry after failed verification)

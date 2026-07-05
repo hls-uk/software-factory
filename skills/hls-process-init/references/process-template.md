@@ -39,6 +39,13 @@ Run all of these locally before any story is accepted:
 Beads, embedded mode. `bd ready` is the queue; close with evidence.
 Intent lives in docs/requirements and docs/plans; beads carries readiness.
 
+## Worktrees
+
+Story work happens in coordinator-managed worktrees: `.worktrees/<slug>`
+(gitignored) on branch `story/<slug>` — always, even single-story runs. The
+main checkout stays on main. Accept = merge + remove worktree; park = push
+branch + remove worktree.
+
 ## Dispatch
 
 Agent roles (coordinator / implementer / reviewer) and their dispatch

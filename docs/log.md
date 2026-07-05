@@ -1,5 +1,21 @@
 # Log
 
+## [2026-07-05 09:30 BST] workflow | v0.3.0: formal worktree lifecycle for story work
+- Driven by: Adam (proposed; three design choices confirmed interactively)
+- Executed by: Claude
+- What changed: worktrees are now mandatory for story work.
+  Coordinator-owned lifecycle: create `.worktrees/<slug>` + `story/<slug>`
+  from fresh main at dispatch; implementers dispatched into the worktree and
+  barred from leaving/managing it; verify runs in-worktree; accept = merge +
+  remove + branch delete; park = push branch + remove (branch in bead);
+  resume ritual includes worktree hygiene. In-repo location chosen so
+  harness permission scopes cover it; parked worktrees removed to stop
+  long-run accumulation; "worktrees always" chosen over
+  only-when-parallel to keep one code path.
+- Evidence: validator 10/10 green; CHANGELOG 0.3.0; edits across
+  hls-factory-orchestrate (SKILL.md Worktree Rules + both references) and
+  hls-process-init (step 7 + process template), repo .gitignore.
+
 ## [2026-07-04 12:00 BST] workflow | v0.2.0: hls- prefix, PR review stage, operating guide
 - Driven by: Adam (three requested upgrades)
 - Executed by: Claude

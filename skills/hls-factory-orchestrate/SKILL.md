@@ -36,27 +36,38 @@ Repeat until done:
    independent stories in parallel worktrees only when verification resources
    allow, and never more than three in flight.
 
-2. **Hand off.** Create a branch (or worktree) for the story. Compose a
-   compact `/goal` from
+2. **Hand off.** Create the story's worktree from fresh main and dispatch the
+   implementer *into* it (see Worktree Rules below):
+
+   ```sh
+   git -C <repo> pull --ff-only
+   git worktree add .worktrees/<slug> -b story/<slug>
+   (cd .worktrees/<slug> && npm ci)   # or the repo's dep-install command
+   ```
+
+   Compose a compact `/goal` from
    [references/goal-handoff-template.md](references/goal-handoff-template.md):
    destination, context pointer to the plan story, scope, preserve, verify,
    done/stop — target ≤1,600 characters, detail stays in the plan doc. The
-   goal instructs the implementer to finish by opening a PR (or pushing its
-   branch if it can't). Dispatch using the implementer configured in
-   `.factory/agents.json` — default:
+   goal names the worktree as the working directory and instructs the
+   implementer to finish by opening a PR (or pushing its branch if it can't).
+   Dispatch using the implementer configured in `.factory/agents.json` —
+   default:
 
    ```sh
-   codex exec --model gpt-5.5-codex -c model_reasoning_effort="xhigh" "$(cat goal.txt)"
+   cd .worktrees/<slug> && codex exec --model gpt-5.5-codex -c model_reasoning_effort="xhigh" "$(cat goal.txt)"
    ```
 
-   The contract is what matters: one whole story, one agent, one branch,
+   The contract is what matters: one whole story, one agent, one worktree,
    explicit verification, no scope beyond the story.
 
 3. **Verify — never on trust.** When the implementer reports done, run the
-   story's verification yourself: the plan's exact commands, the full test
-   suite, lint/build, and dev-browser evidence for anything UI-facing. Check
-   the diff for scope violations (files outside the story's scope, deleted
-   tests, weakened assertions). Gates failing → bounce straight back to the
+   story's verification yourself *inside the story's worktree*: the plan's
+   exact commands, the full test suite, lint/build, and dev-browser evidence
+   for anything UI-facing. Check the diff for scope violations — files
+   outside the story's scope, deleted tests, weakened assertions, and any
+   change outside the worktree (there must be none; the coordinator checkout
+   must still be clean on main). Gates failing → bounce straight back to the
    implementer with the failing output appended to the goal; don't spend a
    review on work that doesn't pass the machines.
 
@@ -74,11 +85,15 @@ Repeat until done:
    land as P3 beads or PR notes and the review is still a pass.
 
 5. **Accept or park.**
-   - **Accept:** merge the PR per the repo's process, close the story bead
-     with evidence (commands run, results, evidence paths, PR link, review
-     rounds used), tick the criteria it covers in the plan's coverage table.
-   - **Park** (verification bounced 3×, or review cap hit): record state in
-     the bead, log it, move to the next ready story — do not grind.
+   - **Accept:** merge the PR per the repo's process, then retire the
+     worktree — `git worktree remove .worktrees/<slug>` and delete the local
+     branch. Close the story bead with evidence (commands run, results,
+     evidence paths, PR link, review rounds used), tick the criteria it
+     covers in the plan's coverage table.
+   - **Park** (verification bounced 3×, or review cap hit): push the branch
+     so the state is safe on the remote, remove the worktree, and record the
+     branch name in the bead — unparking recreates the worktree from the
+     branch. Log it, move to the next ready story — do not grind.
 
 6. **Checkpoint.** After every story: commit and push (if the repo syncs),
    append one entry to `docs/log.md` (what shipped, evidence, decisions made),
@@ -86,12 +101,34 @@ Repeat until done:
    next agent — or you after a compaction — must be able to resume from files
    alone.
 
+## Worktree Rules
+
+Story work happens in worktrees — always, even single-story runs. The
+coordinator's checkout stays on main and is used only for beads, docs,
+merges, and full-suite runs; if story code ever appears there, something has
+gone wrong.
+
+- **Location & naming:** `.worktrees/<slug>/` inside the repo (gitignored),
+  branch `story/<slug>`. Worktree dir and branch always match.
+- **Ownership:** the coordinator creates and removes worktrees; implementers
+  are dispatched into one and must never leave it or manage worktrees
+  themselves.
+- **One per story, reused across rounds:** bounces and review rework happen
+  in the same worktree — the state belongs to the story, not the attempt.
+- **In-flight cap = story cap:** never more worktrees than stories in flight
+  (three max).
+- **Retirement:** accept → merge, remove worktree, delete branch. Park →
+  push branch, remove worktree, branch name in the bead. A worktree with no
+  open story bead is an orphan — remove it.
+
 ## Long-Run Discipline
 
 - **All state lives in beads + docs, never only in your context.** Resume
   ritual after any restart or compaction: read the plan's current-state block,
-  tail `docs/log.md`, run `bd ready` — then continue the loop. Do not re-read
-  the whole history.
+  tail `docs/log.md`, run `bd ready` — then continue the loop, after worktree
+  hygiene: `git worktree list`, remove any worktree whose story bead is
+  closed or parked, then `git worktree prune`. Do not re-read the whole
+  history.
 - **Empty queue ≠ done.** When `bd ready` is empty but acceptance criteria
   remain unticked, run a gap analysis: parked stories, open rework beads,
   unmet criteria, missing stories. Feed gaps back through hls-plan-builder and
@@ -118,6 +155,8 @@ Repeat until done:
 - Implementing stories yourself. Trivial one-line bounces aside, if you're
   editing product code, you've stopped coordinating and the queue is stalling.
 - Accepting on a green summary without re-running verification locally.
+- Story work in the coordinator's checkout — even "just a quick fix". The
+  checkout stays on main; fixes happen in the story's worktree.
 - Reviewing your own dispatch: the reviewer must be an independent agent, or
   the review is theater.
 - Letting review rounds relitigate accepted code — round N+1 sees only the

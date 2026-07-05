@@ -3,6 +3,21 @@
 Newest first. One line per skill change, linking the feedback issue where one
 exists.
 
+## 0.3.0 — 2026-07-05
+
+- hls-factory-orchestrate: formal worktree lifecycle. Story work always
+  happens in coordinator-managed worktrees (`.worktrees/<slug>` in-repo,
+  gitignored, branch `story/<slug>`) — the main checkout never does story
+  work. Accept = merge + remove; park = push branch + remove, branch
+  recorded in the bead; resume ritual gains worktree hygiene
+  (`git worktree list`/`prune`, orphans removed). Implementers are dispatched
+  into a worktree and never manage worktrees themselves.
+- hls-factory-orchestrate: running-the-factory gains "Worktrees in Practice"
+  (per-worktree dep installs, pnpm advantage, bd's native worktree redirect,
+  port-collision guidance); goal-handoff template pins the working directory.
+- hls-process-init: scaffolds the `.worktrees/` gitignore entry; process
+  template gains a Worktrees section.
+
 ## 0.2.0 — 2026-07-04
 
 - **Breaking:** all skills renamed with the `hls-` prefix (e.g. `beads` →

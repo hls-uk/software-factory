@@ -12,3 +12,6 @@ node_modules/
 # Installed skill mirrors are generated — skills/ is the source of truth
 .claude/skills/
 .agents/skills/
+
+# Coordinator-managed story worktrees (hls-factory-orchestrate)
+.worktrees/
