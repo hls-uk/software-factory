@@ -40,11 +40,14 @@ analysis) that cheaper models fumble.
 ## Agent Role Assignment
 
 Roles live in the host repo at `.factory/agents.json`. Implementers are a
-**pool of lanes** — typically one Claude lane (Opus-class) and one Codex
-lane (GPT-5.5 xhigh) running stories in parallel, so both subscriptions are
-earning at once. Full schema, defaults (VPS = 1+1 lanes, workstation = 1),
+**pool of tiered lanes** — typically a frontier and a strong lane per
+vendor, so both subscriptions earn at once and each story runs on the
+cheapest model that matches its Complexity rating (the `deliveryProfile`
+routing table). Per-machine overrides go in the gitignored
+`.factory/agents.local.json`. Full schema, tiers, routing table, defaults,
 usage-limit handling, and host thresholds:
-[parallel-dispatch.md](parallel-dispatch.md).
+[parallel-dispatch.md](parallel-dispatch.md). Multi-human projects add
+`.factory/team.json` and a master plan: [team-lanes.md](team-lanes.md).
 
 `dispatch` is the literal command the coordinator runs (goal/prompt text
 substituted). Any harness/CLI works if it can take a prompt and work a

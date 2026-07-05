@@ -16,6 +16,10 @@ assigned, is covered in
 [references/running-the-factory.md](references/running-the-factory.md).
 Roles (implementer, reviewer, dispatch commands) come from the host repo's
 `.factory/agents.json` when present; otherwise use the defaults named there.
+When several humans share one repo — each running their own coordinator
+against lanes assigned in a master plan, with a named integrator keeping
+main green — follow [references/team-lanes.md](references/team-lanes.md) on
+top of this loop.
 
 ## Preconditions
 
@@ -54,8 +58,12 @@ Repeat until done:
    done/stop — target ≤1,600 characters, detail stays in the plan doc. The
    goal names the worktree as the working directory and instructs the
    implementer to finish by opening a PR (or pushing its branch if it can't).
-   Dispatch using the implementer configured in `.factory/agents.json` —
-   default:
+   Pick the lane by the **routing table** in
+   [references/parallel-dispatch.md](references/parallel-dispatch.md) — the
+   story's Complexity rating × the repo's delivery profile decides model
+   tier and effort (balanced default: frontier·xhigh for high-complexity,
+   Sonnet-5-class·high for standard, ·medium for low) — then run that
+   lane's dispatch command, e.g.:
 
    ```sh
    cd .worktrees/<slug> && codex exec --model gpt-5.5-codex -c model_reasoning_effort="xhigh" "$(cat goal.txt)"
@@ -137,13 +145,17 @@ invariants:
 - Two governors gate every dispatch: **LLM capacity** (the lane's provider
   isn't cooling on usage limits) and **host capacity** (load, memory, disk
   thresholds). Scale by not starting work — never by killing running work.
+- **Stories route by complexity, not habit:** the plan's Complexity rating ×
+  the repo's `deliveryProfile` selects lane tier and effort (routing table
+  in the reference). The reviewer is frontier in every profile.
 - Subscriptions are shared with other hosts: a usage ledger
   (`.factory/usage.jsonl`) paces dispatches, but live limit signals are the
   truth. On a limit: mark the provider cooling, shift the queue to healthy
-  lanes; all lanes cooling → checkpoint and pause until a window resets.
-- **Quality never downgrades.** Production code is written by top-tier
-  models; when none is available, the factory waits — it does not
-  substitute.
+  same-tier lanes; all lanes cooling → checkpoint and pause until a window
+  resets.
+- **Quality never downgrades.** Cooling never moves a story down a tier, and
+  high-complexity stories never leave the frontier tier — when no suitable
+  lane is available, the factory waits; it does not substitute.
 - Every story holds a resource lease (port block, own database on the shared
   Postgres) recorded in `.worktrees/<slug>/.env.story` — granted at
   dispatch, dropped at retirement.

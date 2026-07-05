@@ -1,5 +1,29 @@
 # Log
 
+## [2026-07-05 13:00 BST] workflow | v0.5.0: complexity-routed model tiers + multi-human team lanes
+- Driven by: Adam (research requested; four design choices confirmed)
+- Executed by: Claude
+- What changed: lanes gained tiers (frontier/strong/fast); plan-builder
+  rates each story's Complexity; routing table selects tier+effort from
+  Complexity × deliveryProfile (quality/balanced/throughput, default
+  balanced). Reviewer pinned frontier everywhere; cooling requeues
+  same-tier only. Spark documented as optional disabled fast lane. New
+  team-lanes reference: master plan with human-owned scope-globbed lanes,
+  team.json, gitignored agents.local.json, mechanical merge rights,
+  integrator owns main health + cross-lane deps + programme gaps.
+- Decisions (research-backed): blanket weak-coder + strong-reviewer
+  rejected — review catches defects but cannot inject design quality, and
+  our bounded no-nitpick protocol deliberately can't force restructuring;
+  iterations are the expensive lever. Sonnet 5 (63.2 vs Opus 4.8's 69.2
+  SWE-bench Pro, 40% cheaper, lighter quota) makes complexity-routing the
+  right economics; GPT-5.3-Codex-Spark (1000+ tok/s, ~56% SWE-bench Pro)
+  is a mechanical-edits lane, never a story implementer. Caveat: Sonnet 5
+  tokenizer spends ~30% more tokens, and at xhigh it can be slower than
+  Opus at high — another reason not to force strong-tier onto hard stories.
+- Evidence: validator 10/10 green; CHANGELOG 0.5.0; sources logged in the
+  session (Anthropic model docs, llm-stats, Vellum, OpenAI Spark
+  announcement, remio/turingcollege benchmarks).
+
 ## [2026-07-05 11:00 BST] workflow | v0.4.0: parallel lanes, usage governance, resource leases
 - Driven by: Adam (four design choices confirmed interactively)
 - Executed by: Claude

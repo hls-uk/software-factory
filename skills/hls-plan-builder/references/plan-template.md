@@ -31,6 +31,7 @@ updated: YYYY-MM-DD
 ### Story 1: <name>
 - **Covers:** AC 1, AC 2
 - **Depends on:** Story 0
+- **Complexity:** high | standard | low — <one line: why this rating>
 - **Scope:** <files/areas to touch; what must not break>
 - **Approach:** 2–5 bullets, enough to keep an implementer on the rails.
 - **Resources:** <db / ports / services verification needs — all from env,

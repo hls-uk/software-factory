@@ -65,12 +65,18 @@ recurring sweeps) in Claude Code, `/goal` in Codex, or headless
 (`claude -p` / `codex exec`) on a VPS. Agent roles — who coordinates, who
 implements, who reviews, and the exact dispatch commands — live in the host
 repo's `.factory/agents.json`, scaffolded by `hls-process-init`.
-Implementers run as parallel lanes (typically one Claude + one Codex, so
-both subscriptions earn at once), governed by usage-limit awareness — cooling
-providers shift the queue, exhausted windows pause the run and resume at the
-boundary — and by host capacity checks, with per-story resource leases
-(ports, own database on a shared Postgres) keeping parallel verification
-cheap and local-first. Full guide:
+Implementers run as parallel **tiered lanes** (frontier + strong per vendor,
+e.g. Opus 4.8 and Sonnet 5 alongside GPT-5.5-Codex): each story is routed to
+the cheapest tier matching its planned Complexity under the repo's
+`deliveryProfile` (quality / balanced / throughput), with the reviewer
+pinned frontier in every profile. Usage-limit awareness governs the run —
+cooling providers shift the queue to same-tier lanes, exhausted windows
+pause and resume at the boundary — alongside host capacity checks and
+per-story resource leases (ports, own database on a shared Postgres) that
+keep parallel verification cheap and local-first. Multiple humans can share
+one repo via master-plan lanes and an integrator role
+([team-lanes](skills/hls-factory-orchestrate/references/team-lanes.md)).
+Full guide:
 [running-the-factory](skills/hls-factory-orchestrate/references/running-the-factory.md);
 scaling and limits:
 [parallel-dispatch](skills/hls-factory-orchestrate/references/parallel-dispatch.md);

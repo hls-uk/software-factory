@@ -41,10 +41,14 @@ In order, each verified before the next:
    install choice to the repo docs so future sessions repeat it.
 4. **Factory config** — create `.factory/feedback.json` pointing at the
    tracker that owns skill improvements (see the hls-skill-feedback skill),
-   and `.factory/agents.json` assigning the coordinator, implementer, and
-   reviewer roles with their dispatch commands (format and defaults: the
-   hls-factory-orchestrate skill's `references/running-the-factory.md`).
-   Leave credentials out; name the access mechanism.
+   and `.factory/agents.json` assigning the coordinator, implementer lanes
+   (with tiers), reviewer, and the `deliveryProfile` (format, routing table,
+   and defaults: the hls-factory-orchestrate skill's
+   `references/running-the-factory.md` and `references/parallel-dispatch.md`).
+   Gitignore `.factory/agents.local.json` (per-machine overrides). For
+   multi-human projects, add `.factory/team.json` and a master plan per the
+   `references/team-lanes.md` reference. Leave credentials out; name the
+   access mechanism.
 5. **Verification harness** — the factory cannot run without executable
    gates. Ensure `test`, `lint`, and `build` commands exist and run green
    (even if the suite is one smoke test), and record them in the process doc.

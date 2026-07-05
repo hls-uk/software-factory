@@ -3,6 +3,27 @@
 Newest first. One line per skill change, linking the feedback issue where one
 exists.
 
+## 0.5.0 — 2026-07-05
+
+- hls-factory-orchestrate: story-time model routing. Lanes carry tiers
+  (frontier / strong / fast); each story routes by its Complexity rating ×
+  the repo's `deliveryProfile` (quality / balanced / throughput, default
+  balanced: frontier·xhigh for high-complexity, Sonnet-5-class·high for
+  standard, ·medium for low). Reviewer pinned frontier in every profile;
+  cooling requeues same-tier only; high-complexity never leaves frontier.
+  GPT-5.3-Codex-Spark documented as an optional disabled-by-default fast
+  lane (mechanical edits/trivial rework only; research preview).
+- hls-plan-builder: stories carry a Complexity line (judged by ambiguity
+  and blast radius, not size).
+- hls-factory-orchestrate: new `references/team-lanes.md` — optional
+  multi-human mode: master plan with human-owned lanes and scope globs,
+  `.factory/team.json`, gitignored `.factory/agents.local.json` per-machine
+  overrides, mechanical scope-checked merge rights (lane owners merge
+  in-lane; integrator merges cross-lane/shared), integrator role owning
+  main health, cross-lane deps, and programme gap analysis.
+- hls-process-init: factory config step covers deliveryProfile, tiered
+  lanes, agents.local.json gitignore, and optional team.json.
+
 ## 0.4.0 — 2026-07-05
 
 - hls-factory-orchestrate: parallel implementer lanes. `.factory/agents.json`

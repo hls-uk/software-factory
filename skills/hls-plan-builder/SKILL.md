@@ -34,6 +34,11 @@ proves itself done.
    - Names its scope (files/areas), what it must not break, and its
      **verification**: the exact commands or checks that prove it done
      (tests to pass, dev-browser evidence for UI, lint/build gates).
+   - Carries a **Complexity** rating the orchestrator routes models by:
+     `high` (architectural weight, genuine ambiguity, or wide blast radius —
+     gets a frontier model), `standard` (well-specified feature work), or
+     `low` (mechanical, narrow, well-trodden). Judge by ambiguity and blast
+     radius, not size — a one-line change to an auth check is `high`.
    - Maps to acceptance criteria by number. Every criterion is covered by at
      least one story; a story with no criterion is scope creep — cut it or
      take it back to requirements.

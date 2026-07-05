@@ -6,41 +6,98 @@ subscription limits or the host. Two governors decide how many stories run:
 (load, memory, disk). Effective concurrency = min(open lanes, host headroom,
 ready stories, the three-story cap).
 
-## Lanes — `.factory/agents.json` v2
+## Lanes — `.factory/agents.json`
 
-`implementers` is a pool; each lane names its provider and dispatch command:
+`implementers` is a pool of lanes; each lane names its provider, its
+**tier**, and its dispatch command:
 
 ```json
 {
   "coordinator": { "harness": "claude-code", "launch": "/goal via hls-factory-orchestrate" },
+  "deliveryProfile": "balanced",
   "implementers": [
     {
-      "id": "claude-main",
+      "id": "claude-frontier",
       "provider": "claude",
+      "tier": "frontier",
       "dispatch": "claude -p --model claude-opus-4-8 \"$(cat goal.txt)\"",
       "maxConcurrent": 1
     },
     {
-      "id": "codex-main",
-      "provider": "openai",
-      "dispatch": "codex exec --model gpt-5.5-codex -c model_reasoning_effort=\"xhigh\" \"$(cat goal.txt)\"",
+      "id": "claude-strong",
+      "provider": "claude",
+      "tier": "strong",
+      "dispatch": "claude -p --model claude-sonnet-5 \"$(cat goal.txt)\"",
       "maxConcurrent": 1
+    },
+    {
+      "id": "codex-frontier",
+      "provider": "openai",
+      "tier": "frontier",
+      "dispatch": "codex exec --model gpt-5.5-codex -c model_reasoning_effort=\"{effort}\" \"$(cat goal.txt)\"",
+      "maxConcurrent": 1
+    },
+    {
+      "id": "codex-spark",
+      "provider": "openai",
+      "tier": "fast",
+      "enabled": false,
+      "dispatch": "codex exec --model gpt-5.3-codex-spark \"$(cat goal.txt)\"",
+      "note": "research preview — enable when your plan has access"
     }
   ],
-  "reviewer": { "harness": "claude-code", "dispatch": "claude -p \"$(cat review-prompt.txt)\"" },
+  "reviewer": { "harness": "claude-code", "tier": "frontier", "dispatch": "claude -p \"$(cat review-prompt.txt)\"" },
   "host": { "maxLoadPerCore": 0.8, "minFreeMemGb": 4, "minFreeDiskGb": 10 },
   "limits": { "claude": { "windowHours": 5 }, "openai": { "windowHours": 5 } }
 }
 ```
 
-Defaults when unconfigured: **autonomous VPS = 1 Claude + 1 Codex lane**
-(two stories in parallel, one top-tier model each); **supervised
-workstation = one lane total**, alternating providers per story. A legacy
-single `implementer` object is one lane. Raise `maxConcurrent` per repo only
-after its verification has proven parallel-safe.
+Tiers: **frontier** (best available — Opus 4.8 class, GPT-5.5-Codex at
+xhigh), **strong** (near-frontier at a fraction of cost and quota — Sonnet 5
+class: ~63 vs ~69 SWE-bench Pro against Opus 4.8, 40% cheaper per token),
+**fast** (real-time models like GPT-5.3-Codex-Spark: 1,000+ tok/s but a
+large accuracy cliff — for mechanical edits and trivial rework only, never
+whole stories). `{effort}` in a dispatch command is substituted from the
+routing table where the harness supports an effort flag; otherwise encode
+effort as separate lane entries.
 
-Running both vendors in parallel is the point: it doubles effective
-subscription throughput and no single provider's window stalls the factory.
+Concurrency: lanes on the same provider **share that provider's slot** —
+default one in-flight story per provider (VPS: Claude + Codex = two stories
+in parallel; supervised workstation: one story total). Raise per-repo only
+after verification has proven parallel-safe. Running both vendors in
+parallel is the point: it doubles effective subscription throughput and no
+single provider's window stalls the factory.
+
+## Story Routing — complexity × delivery profile
+
+Every story carries a `Complexity` line from hls-plan-builder (`high` —
+architectural, ambiguous, or high blast radius; `standard` — well-specified
+feature work; `low` — mechanical, narrow, well-trodden). The repo's
+`deliveryProfile` sets the trade-off. The coordinator picks lane tier +
+effort per story:
+
+| Complexity | `quality` | `balanced` (default) | `throughput` |
+|---|---|---|---|
+| high | frontier · xhigh | frontier · xhigh | frontier · xhigh |
+| standard | frontier · xhigh | strong · high | strong · high |
+| low | frontier · high | strong · medium | strong · medium; fast lane allowed for purely mechanical stories |
+
+Rules that hold in **every** profile:
+
+- **The reviewer is frontier, always.** Review is the cheapest stage in the
+  loop and the last defence before merge; the expensive failure is rework,
+  not review tokens. Never downgrade it to save quota.
+- **High-complexity stories never leave the frontier tier.** Review catches
+  defects; it cannot inject design quality post-hoc — quality above
+  "correct" comes from the implementer and the plan, not from more
+  iterations. The bounded review protocol is deliberately unable to force
+  restructuring, so don't send a weak model to do an architect's story.
+- **Rework rounds go back to the story's original lane** (same tier). Under
+  `throughput`, a trivial mechanical fix (rename, one-liner from an exact
+  reviewer instruction) may use the fast lane.
+- Routing is planned selection, not degradation: provider cooling (below)
+  never downgrades a story's tier — a frontier story waits for a frontier
+  lane rather than running on a lesser model.
 
 ## The Scheduling Loop
 
@@ -77,11 +134,13 @@ messages in dispatch output. On a signal:
    the next window boundary if derivable from the ledger, else now + 30 min.
 2. Let that lane's in-flight story finish if it can; otherwise park the
    story normally (push branch, remove worktree, note in bead).
-3. Requeue the story to a healthy provider's lane — same branch and a fresh
-   worktree from it; the goal gains one line noting the handover so the new
-   implementer reads the existing diff first.
-4. Quality never downgrades: production code is written by top-tier models
-   only. If no healthy lane exists, pause — don't substitute a weaker model.
+3. Requeue the story to a healthy lane **of the same tier** on another
+   provider — same branch and a fresh worktree from it; the goal gains one
+   line noting the handover so the new implementer reads the existing diff
+   first.
+4. Quality never downgrades: cooling never moves a story down a tier. If no
+   healthy same-tier lane exists, the story waits (work other tiers'
+   stories meanwhile) — don't substitute a weaker model.
 
 **Pause / resume (all providers cooling):** checkpoint fully (push code,
 `bd dolt push`, log entry with `resumeAt` per provider), then:
