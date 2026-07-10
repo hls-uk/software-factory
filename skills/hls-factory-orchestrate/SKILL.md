@@ -21,6 +21,13 @@ against lanes assigned in a master plan, with a named integrator keeping
 main green — follow [references/team-lanes.md](references/team-lanes.md) on
 top of this loop.
 
+**Integration branch:** everywhere this skill says *main*, read the repo's
+integration branch — `main` unless `.factory/agents.json`
+(`"integrationBranch"`) or `docs/process.md` names another (e.g. a trial or
+release branch). Stories branch from it, PRs target it, the post-merge full
+suite runs on it, and "never push to main" style guards apply to whatever
+branch it is *plus* main itself.
+
 ## Preconditions
 
 - A confirmed requirements doc (`docs/requirements/<slug>.md`) — else run
@@ -179,6 +186,13 @@ invariants:
 - **Usage limits are weather, not failure.** Cooling providers, pauses, and
   window-boundary resumes are normal operation — log them, checkpoint, and
   let the resume ritual pick the run back up.
+- **Stack-specific walls have a playbook.** When a failure smells like the
+  technology rather than the story (build tool, migration framework, test
+  harness, OS, agent CLI), consult the hls-tech-playbook skill if installed
+  before debugging from scratch — and fold its applicable guards into goals
+  when dispatching into a stack it covers. A stack-specific fix you solve
+  that isn't in the playbook gets fed back (hls-skill-feedback) so the
+  playbook grows.
 
 ## Escalation & Stops
 

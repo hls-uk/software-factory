@@ -25,6 +25,7 @@ offers to install into your eve building agent.
 | [hls-requirements-interview](skills/hls-requirements-interview/SKILL.md) | Build requirements by interviewing the user — testable acceptance criteria, surfaced assumptions. |
 | [hls-plan-builder](skills/hls-plan-builder/SKILL.md) | Requirements → stories sized for one-agent handoff, each with its own verification, registered as a beads graph. |
 | [hls-factory-orchestrate](skills/hls-factory-orchestrate/SKILL.md) | The long-running coordinator: dispatch whole stories to implementing agents via `/goal`, verify locally, run each PR through a bounded review, loop for days until every criterion has evidence. |
+| [hls-tech-playbook](skills/hls-tech-playbook/SKILL.md) | Growing per-stack pitfall/workaround memory (migrations, JVM/Gradle, Quarkus, git worktrees, macOS, harness CLIs) — consulted on demand when a run hits a stack-specific wall. |
 
 **Substrate**
 

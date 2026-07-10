@@ -27,6 +27,41 @@ preference:
   depend on the session: state is in beads + docs, so a killed session
   resumes with the resume ritual in the skill.
 
+### Headless dispatch must be process-durable
+
+A print-mode session ends the moment the coordinator finishes a reply — and
+the harness's background tasks **and their child processes die with it**. A
+headless coordinator must therefore never dispatch lanes through its
+harness's background-task feature (first seen live: chivo trial run 1, both
+lanes killed mid-story). Instead:
+
+- Dispatch each lane OS-durably from the story worktree. `nohup … & disown`
+  guards only SIGHUP — on macOS (no `setsid` binary) lanes still died with
+  the session. The proven pattern is a tiny spawn helper that calls
+  `os.setsid()` before exec so the lane owns its session and process group
+  (reparents to launchd/init and survives every coordinator exit):
+  `python3 spawn_detached.py -- <dispatch cmd> > <lane log> 2>&1`, pid to
+  `<lane pid file>`.
+- On every launch, run the resume ritual before acting: plan current-state →
+  log tail → `bd ready` → lane pid liveness (`kill -0 $(cat <pid>)`) → lane
+  logs. A dead pid with no PR and an incomplete log is a crashed lane —
+  re-dispatch its archived goal with one appended line telling the
+  implementer to inspect the worktree's existing diff and continue.
+- Pair the launch with a relaunch loop (cron, launchd, or a supervisor
+  `while` script): relaunch when no coordinator is running, waking on lane
+  exit or a ~30-min heartbeat. Make the "is a coordinator running" check
+  match ONLY the coordinator invocation — a loose `pgrep claude` also
+  matches reviewer lanes and stalls relaunches while long reviews run.
+- Use absolute paths to the harness binaries in launch/dispatch commands and
+  preflight through the same shell the supervisor uses — default (non-login)
+  shell PATHs can resolve a different, older binary than your interactive
+  shell.
+- Launch the supervisor and every dispatch with a billing-sanitized
+  environment (`env -u ANTHROPIC_API_KEY -u OPENAI_API_KEY …`) so a stray
+  exported key can't silently flip lanes from subscription to per-token API
+  billing — the full rule is the Billing Guardrail in
+  [parallel-dispatch.md](parallel-dispatch.md).
+
 ## Launching from Codex (coordinator)
 
 - **`/goal`** in the Codex TUI — same objective text; Codex keeps working

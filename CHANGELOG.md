@@ -3,6 +3,109 @@
 Newest first. One line per skill change, linking the feedback issue where one
 exists.
 
+*Versions 0.5.1–0.6.1 were folded back on 2026-07-10 from the
+incept5/i5-software-factory fork (bootstrapped from this repo at 0.5.0),
+which hardened them in a live factory trial ("chivo"); `i5sf-*` evidence
+ids refer to that fork's tracker.*
+
+## 0.6.1 — 2026-07-09
+
+- hls-factory-orchestrate (parallel-dispatch): **Billing Guardrail** — the
+  factory runs on subscriptions only; per-token API billing requires an
+  explicit `"billing": "api"` lane. Dispatch/supervisor environments strip
+  `ANTHROPIC_API_KEY`/`OPENAI_API_KEY` (`env -u`), preflight verifies auth
+  mode per lane, and usage-limit cooling never escalates billing. Example
+  agents.json gains a disabled explicit API-overflow lane.
+- hls-tech-playbook (harness-clis): silent-API-billing entry with concrete
+  per-CLI verification commands (`codex login status`, env grep,
+  apiKeyHelper check) run through the dispatch shell.
+- hls-factory-orchestrate (running-the-factory): headless launches are
+  billing-sanitized.
+
+## 0.6.0 — 2026-07-09
+
+- **New skill: hls-tech-playbook** — the factory's growing per-stack memory
+  of technology-specific pitfalls and proven workarounds, consulted on
+  demand (entry shape: Symptom → Root cause → Fix → Coordinator notes;
+  growth via hls-skill-feedback). Seeded from the fork's chivo trial
+  (i5sf-h5c/i5sf-147) with six references: schema migrations (timestamp
+  versioning preferred over leased integer ranges — no allocation
+  authority, no gaps; out-of-order trade-off documented), JVM/Gradle (512m
+  forked-test-heap cliff, init-script override, sandbox cache roots),
+  Quarkus testing (fixed test-port + coupled-URL leases, dev-services
+  memory), git worktrees (common-dir sandbox access, lifecycle), macOS
+  processes (os.setsid spawn helper, GNU-tool gaps, pgrep self-match),
+  harness CLIs (auth-dependent model ids, version pinning, known-good
+  codex sandbox flags, print-mode child lifetime).
+- hls-factory-orchestrate: Long-Run Discipline now consults
+  hls-tech-playbook on stack-smelling failures and feeds new fixes back;
+  parallel-dispatch's migration guidance now prefers timestamp versions
+  over range leases.
+
+## 0.5.5 — 2026-07-09
+
+- hls-factory-orchestrate (parallel-dispatch): trial-close findings —
+  version leases need a single allocation authority (two branches
+  independently took the same Flyway number); the second-merged concurrent
+  story must be rebased onto integration and re-gated (auto-merged shared
+  files produce a combined tree neither lane verified); sandboxed worktree
+  lanes need the git common dir writable to self-commit; environment fixes
+  discovered mid-run must propagate into later goals' verify lines.
+- hls-factory-orchestrate (running-the-factory): durable dispatch upgraded
+  to the proven `os.setsid()` spawn-helper pattern — nohup+disown guards
+  only SIGHUP and macOS lacks a setsid binary.
+
+## 0.5.4 — 2026-07-08
+
+- hls-factory-orchestrate (parallel-dispatch): OOM guidance refined with the
+  proven root cause — build tools fork test JVMs at small default heaps
+  (Gradle 512m) that a growing suite crosses even run alone; check the fork
+  heap before blaming concurrency, right-size it non-invasively from the
+  coordinator (e.g. Gradle --init-script) and file the permanent build
+  change as a sweep bead. Verified live: GL-B5 re-gated green on 2g and
+  merged (chivo trial, i5sf-h5c).
+
+## 0.5.3 — 2026-07-08
+
+- hls-factory-orchestrate (parallel-dispatch): Verify Scope gains the
+  correctness-vs-capacity interference distinction — leases partition
+  ports/databases/migrations, but memory has no lease: run at most one
+  full-suite gate at a time (or cap per-suite heap so N provably fit), and
+  treat an OOM'd gate after passing story tests as a bounce, not a story
+  failure. From the chivo trial's live 2-gate OOM on a 48 GB host
+  (i5sf-h5c).
+
+## 0.5.2 — 2026-07-08
+
+- hls-factory-orchestrate (parallel-dispatch): Resource Leases gains
+  schema-migration version-range leases — concurrent stories in a global
+  Flyway/Liquibase namespace both pick the same "next" number; lease each
+  story a range at dispatch and state it in the goal. Promoted from a live
+  coordinator invention in the chivo trial (i5sf-18j).
+- hls-factory-orchestrate (running-the-factory): headless coordinators must
+  dispatch lanes process-durably — print-mode sessions kill harness
+  background tasks and their children at end of reply (chivo trial run 1
+  killed both lanes mid-story). New rules: nohup+pid-file dispatch, pid
+  liveness in the resume ritual, crashed-lane re-dispatch, supervisor
+  relaunch loop with a coordinator-only process match, absolute harness
+  paths. Lane Preflight now requires probing through the dispatch shell.
+
+## 0.5.1 — 2026-07-08
+
+- hls-factory-orchestrate: integration branch made configurable —
+  everywhere the skill says *main*, read the repo's integration branch
+  (`.factory/agents.json` `"integrationBranch"` or `docs/process.md`);
+  guards apply to that branch plus main itself. (Trial finding, i5sf-h5c.)
+- hls-factory-orchestrate (parallel-dispatch): new Lane Preflight section —
+  probe every lane cheaply before the first dispatch; model availability
+  varies by auth (subscription CLIs reject ids API keys accept), and
+  sandboxed lanes need build caches (Gradle/Maven/npm homes) granted as
+  writable roots plus Docker-socket reach for testcontainers.
+  (Trial finding, i5sf-h5c.)
+- hls-beads: setup gains a `bd ready` probe and a template-copy recovery
+  recipe (config without database → *database not initialized*, phantom
+  remote-history refusal; reinit steps documented). (i5sf-9k1.)
+
 ## 0.5.0 — 2026-07-05
 
 - hls-factory-orchestrate: story-time model routing. Lanes carry tiers

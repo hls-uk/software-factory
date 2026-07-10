@@ -15,12 +15,22 @@ durable synthesis in markdown and link to them from issues.
 ```sh
 command -v bd || brew install beads   # or: npm install -g @beads/bd
 bd init                                # embedded mode — data in .beads/, no server
+bd ready                               # probe: must answer cleanly before you rely on the tracker
 ```
 
 Embedded mode is the default and the only mode to use. If the git repo has a
 remote, `bd init` auto-configures a matching Dolt remote named `origin`.
 
 Commit `.beads/` config per the repo's convention; never hand-edit files in it.
+
+**Repo copied from a template?** A copied `.beads/` can carry config without a
+working database: `bd create` fails with *database not initialized* and
+`bd init` may refuse, claiming remote Dolt history that
+`git ls-remote origin 'refs/dolt/*'` shows does not exist. Recovery: confirm
+the local queue is empty (`bd ready`), remove the stale local database
+(`rm -rf .beads/embeddeddolt`), temporarily comment out `sync.remote` in
+`.beads/config.yaml`, run `bd init --reinit-local --prefix <prefix>`, then
+restore `sync.remote`.
 
 ## Core Rules
 

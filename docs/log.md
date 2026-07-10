@@ -1,5 +1,33 @@
 # Log
 
+## [2026-07-10 10:30 BST] workflow | v0.5.1–v0.6.1: fold-back of generic fixes from the incept5 fork
+- Driven by: Adam (asked to fold back non-Incept5-specific updates from
+  ../../incept5/i5-software-factory)
+- Executed by: Claude
+- What changed: ported every post-bootstrap change from the
+  incept5/i5-software-factory fork (bootstrapped from this repo at v0.5.0,
+  hardened in its live "chivo" factory trial), rename-normalized i5-→hls-.
+  hls-factory-orchestrate: configurable integration branch; Lane Preflight
+  (echo probe, auth-dependent model ids, sandbox cache/Docker/git-common-dir
+  writable roots, env-fix propagation into later goals); Billing Guardrail
+  (subscriptions only — `env -u` key stripping, auth-mode preflight,
+  cooling never escalates billing, explicit `"billing": "api"` opt-in
+  lane); migration timestamp-versioning preferred over range leases;
+  second-merge rebase+re-gate; correctness-vs-capacity interference
+  (serialize full-suite gates, 512m forked-test-heap root cause, OOM'd
+  gate = bounce); process-durable headless dispatch via os.setsid spawn
+  helper + supervisor relaunch loop. hls-beads: `bd ready` probe +
+  template-copy recovery recipe. New skill hls-tech-playbook (six stack
+  references + growth protocol). README/AGENTS/.gitignore/CHANGELOG
+  updated to match. Skipped as repo-local: fork's bd-regenerated
+  AGENTS/CLAUDE beads blocks, its docs/log entries, LICENSE/branding.
+- Also: this repo's `.beads/` was config-without-database (the exact state
+  the folded-back hls-beads recipe documents); remote had real history so
+  recovery was `bd bootstrap` from `refs/dolt/data`, not reinit.
+- Evidence: baseline check — fork bootstrap files diff-clean against this
+  repo's HEAD after rename normalization, so all ports applied verbatim;
+  validator 11/11 green; CHANGELOG 0.5.1–0.6.1; bead software-factory-0sx.
+
 ## [2026-07-05 13:00 BST] workflow | v0.5.0: complexity-routed model tiers + multi-human team lanes
 - Driven by: Adam (research requested; four design choices confirmed)
 - Executed by: Claude

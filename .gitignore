@@ -15,3 +15,6 @@ node_modules/
 
 # Coordinator-managed story worktrees (hls-factory-orchestrate)
 .worktrees/
+
+# personal Claude Code overrides
+.claude/settings.local.json
