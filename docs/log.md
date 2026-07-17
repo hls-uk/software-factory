@@ -1,5 +1,20 @@
 # Log
 
+## [2026-07-17 10:38 BST] release | v0.7.0 commit and remote alignment
+- Driven by: Adam (authorised commit and push and asked to get the remote
+  sorted)
+- Executed by: Codex
+- What changed: committed the HLS v0.7.0 product release as `b968171` and the
+  structured-reporting requirements plus session evidence as `36a155e`; pushed
+  both to `origin/main`; closed Bead `software-factory-0rh`. The Beads Dolt
+  push initially found newer remote state, so pulled it without force,
+  confirmed the closure survived the merge and no work remained in progress,
+  then pushed the integrated data branch successfully.
+- Evidence: skill validator passed 15/15 with zero errors or warnings;
+  review-packet tests passed 5/5; staged and working-tree whitespace checks
+  passed; Git advanced from `a2a979a` to `36a155e`; no force push, fork edit,
+  publication, or external configuration change was used.
+
 ## [2026-07-17 10:24 BST] workflow | v0.7.0 single-operator post-copy fold-back
 - Driven by: Adam (activated the goal to audit `72df369..fe52b93`, fold useful
   generic changes back, remove team support, and retain multiple laptop/VPS
