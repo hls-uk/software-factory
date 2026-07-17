@@ -8,6 +8,8 @@ page add or rename.
 
 - [README](../README.md) — what this repo is and how to install the skills.
 - [AGENTS.md](../AGENTS.md) — the operating manual for agents working here.
+- [Factory Method](factory-method.md) — the single-operator, multi-host
+  evidence loop and the reasons behind its gates.
 - [BOOTSTRAP-BRIEF](BOOTSTRAP-BRIEF.md) — the founding spec: the full v1
   requirements this repo was bootstrapped against.
 
@@ -17,6 +19,14 @@ page add or rename.
 - Work queue: `bd ready` (beads, embedded — see `skills/hls-beads/SKILL.md`).
 - Feedback intake: `.factory/feedback.json` → processed by
   `skills/hls-skill-sweep`.
+
+## Requirements
+
+- [Structured Reporting Evaluation Harness Validation](requirements/structured-reporting-evaluation-harness-validation.md)
+  — confirmed one-sprint PRD for a synthetic, research-safe XBRL/HTML/PDF
+  engineering-readiness artifact.
+- [Structured Reporting Model Trial](requirements/structured-reporting-model-trial.md)
+  — superseded study-shaped PRD retained for audit; do not build.
 
 ## Decisions
 
