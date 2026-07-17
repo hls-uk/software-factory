@@ -1,6 +1,6 @@
 ---
 name: hls-factory-orchestrate
-description: Run the software factory as the top-level coordinating agent — take a confirmed requirements set and deliver it to production quality by dispatching whole stories to implementing agents (e.g. Codex at xhigh reasoning) via /goal handoffs, verifying every result locally, putting each story through a bounded PR review, and looping for hours or days until every acceptance criterion has evidence. Use when asked to coordinate, orchestrate, or autonomously deliver a planned body of work.
+description: Run the software factory as the top-level coordinating agent — take confirmed requirements and deliver them by dispatching whole stories through configured agent lanes, verifying every result locally, putting each story through bounded deterministic review, and looping until every acceptance criterion has evidence. Use when asked to coordinate, orchestrate, or autonomously deliver a planned body of work.
 ---
 
 # Factory Orchestrate
@@ -16,10 +16,10 @@ assigned, is covered in
 [references/running-the-factory.md](references/running-the-factory.md).
 Roles (implementer, reviewer, dispatch commands) come from the host repo's
 `.factory/agents.json` when present; otherwise use the defaults named there.
-When several humans share one repo — each running their own coordinator
-against lanes assigned in a master plan, with a named integrator keeping
-main green — follow [references/team-lanes.md](references/team-lanes.md) on
-top of this loop.
+This factory has one human operator and may use several laptops or VPS hosts.
+Host identity, shared-queue coordination, and failover are defined in
+[references/host-lanes.md](references/host-lanes.md); hosts add capacity,
+never another decision authority.
 
 **Integration branch:** everywhere this skill says *main*, read the repo's
 integration branch — `main` unless `.factory/agents.json`
@@ -32,10 +32,27 @@ branch it is *plus* main itself.
 
 - A confirmed requirements doc (`docs/requirements/<slug>.md`) — else run
   hls-requirements-interview.
-- A plan with per-story verification (`docs/plans/<slug>-plan.md`) and a beads
-  graph — else run hls-plan-builder.
+- A signed-off architecture doc (`docs/architecture/<slug>-architecture.md`,
+  status `signed-off` — the hls-architecture skill), or a plan that records
+  `architecture: unchanged`. The sign-off is reserved for the operator: an
+  agent never self-approves it.
+- A plan with per-story verification (`docs/plans/<slug>-plan.md`) and the
+  current story wave registered in beads — else run hls-plan-builder.
 - Working local verification: the test/lint/build commands in the plan run
   green on main before you dispatch anything. Fix the harness first otherwise.
+- When a story uses a third party, its signed architecture and plan name the
+  same-adapter simulator gate, the shared real non-production integration
+  gate, and the approved credential/probe mechanism. Missing access leaves
+  the real gate red; it never weakens or removes the local gate.
+- Repo guards active: if the repo declares git hooks (a `.githooks/` dir, a
+  `core.hooksPath` setup step in its docs or dev scripts), activate them in
+  the coordinator checkout before the first commit — worktrees share the
+  repo's git config, so one activation covers every lane, but commits made
+  *on a lane's behalf* run under the coordinator's config, so the coordinator
+  is the one place activation cannot be skipped. A guard that exists only as
+  an opt-in local hook (derived-artifact regeneration, contract sync) is an
+  escape waiting to happen: honor it during the run, and file feedback
+  (hls-skill-feedback) that it belongs in the repo's verify gate.
 
 ## The Story Loop
 
@@ -47,11 +64,17 @@ Repeat until done:
    ready queue — lanes, caps, and the capacity checks (provider not cooling,
    host has headroom) are defined in
    [references/parallel-dispatch.md](references/parallel-dispatch.md).
-   Defaults: one Claude + one Codex lane on an autonomous VPS, a single lane
-   on a supervised workstation; never more than three stories in flight.
+   Without config, use one preflighted lane on the current host. Never exceed
+   the configured cap or three stories in flight.
 
 2. **Hand off.** Create the story's worktree from fresh main and dispatch the
-   implementer *into* it (see Worktree Rules below):
+   implementer *into* it (see Worktree Rules below). Before the story branch
+   diverges, freeze its reviewer inputs in the canonical base-committed
+   contract defined by
+   [references/review-packets.md](references/review-packets.md): copy the
+   story, criteria, every named spec, and predetermined verification-evidence
+   paths from the plan. This is the last point where input paths are chosen;
+   prompt assembly later has no file-list or free-prose inputs.
 
    ```sh
    git -C <repo> pull --ff-only
@@ -68,12 +91,11 @@ Repeat until done:
    Pick the lane by the **routing table** in
    [references/parallel-dispatch.md](references/parallel-dispatch.md) — the
    story's Complexity rating × the repo's delivery profile decides model
-   tier and effort (balanced default: frontier·xhigh for high-complexity,
-   Sonnet-5-class·high for standard, ·medium for low) — then run that
-   lane's dispatch command, e.g.:
+   tier and effort. Resolve tiers to models proven available in this host's
+   local profile; then run that lane's configured dispatch command:
 
    ```sh
-   cd .worktrees/<slug> && codex exec --model gpt-5.5-codex -c model_reasoning_effort="xhigh" "$(cat goal.txt)"
+   cd .worktrees/<slug> && <configured-dispatch-command> "$(cat goal.txt)"
    ```
 
    The contract is what matters: one whole story, one agent, one worktree,
@@ -90,11 +112,30 @@ Repeat until done:
    implementer with the failing output appended to the goal; don't spend a
    review on work that doesn't pass the machines.
 
+   If the plan names a real-vendor gate, run it only through the approved,
+   audited probe/runner and serialize it against that shared vendor tenant.
+   Capture redacted request/response semantics and provenance (environment,
+   vendor spec/version, observation date, scenario, evidence link/hash), not
+   credentials or PII. Compare the result with the simulator profile. Any new
+   behaviour or discrepancy bounces the story until the simulator fixture/
+   profile and its regression test are updated, unless the operator
+   explicitly accepts a dated deferral. Simulator-only evidence cannot satisfy
+   a real-integration criterion; real-vendor evidence cannot replace the
+   deterministic local gate.
+
 4. **Review — bounded, then done.** Once gates pass, ensure the story is a PR
    and put it through the review protocol in
    [references/review-protocol.md](references/review-protocol.md): an
-   independent reviewer (not the implementer) reads the diff against the
-   story and its acceptance criteria, and splits findings into **blockers**
+   independent reviewer — a **fresh agent session** with none of the
+   implementer's context (the same human, subscription, and model are fine;
+   a second human is not what independence means) — reads the diff against
+   the story and its acceptance criteria. Build and verify its prompt with the
+   deterministic packet tool in
+   [references/review-packets.md](references/review-packets.md); dispatch
+   `prompt.txt` verbatim with no coordinator prefix, suffix, selected files,
+   or emphasis. The reviewer records a structured verdict pinned to the exact
+   base/head, template, manifest, prompt, and diff hashes, and splits findings
+   into **blockers**
    and **non-blockers**. Blockers become one rework bead blocking the story
    bead; the implementer gets exactly that list. Follow-up reviews see only
    the delta since the last reviewed commit and may not raise non-blockers on
@@ -122,6 +163,42 @@ Repeat until done:
    and refresh the short current-state block at the top of the plan doc. The
    next agent — or you after a compaction — must be able to resume from files
    alone.
+
+   Treat a real-vendor observation as durable product learning: record it in
+   the host repo's vendor/contract evidence, update the simulator in the same
+   story or a blocking correction story, and file hls-skill-feedback only when
+   the lesson changes the generic factory method rather than one vendor's
+   behaviour.
+
+## The Promotion Gate — findings never ride to main
+
+Story reviews split findings by severity; non-blockers become finding beads
+and never block a story's merge to the integration branch. That debt has a
+hard boundary: **it does not cross the promotion boundary unfixed.** A live
+factory trial exposed this failure: reviewer-caught findings remained open
+while the roll-up shipped, so a later review rediscovered known bugs.
+
+- **Drain continuously.** A free lane with no ready story is a drain
+  opportunity: batch open finding beads into a bounded sweep story (same
+  scope discipline, safety valve on money paths) and dispatch it through the
+  normal loop — verify, review, merge. Don't let the debt pile up for a
+  big-bang drain at the end.
+- **Gate the promotion PR.** Before pushing the PR that promotes the
+  integration branch to main — or before declaring the run done when main
+  *is* the integration branch — every finding bead opened during the run must
+  be **closed** (fixed by dispatched implementer agents through the
+  normal verify + review loop) or **explicitly waived by the human**. Fixing
+  is the default; waiving is the operator's decision, never an agent's. A
+  requirement-traced finding may be fixed or explicitly accepted by the
+  operator; there is no peer or alternate-host waiver path.
+- **Disclose what remains.** The promotion PR body lists every waived bead
+  with a one-line risk statement. An outside reviewer should be able to
+  rediscover nothing the factory already knows.
+- **Review the union.** The promotion diff — everything since main diverged —
+  gets one independent review at the same bar as story reviews
+  ([references/review-protocol.md](references/review-protocol.md)). Merged
+  stories interact in ways no per-story review saw: shared-file unions,
+  cross-module reachability, contract drift between stories.
 
 ## Worktree Rules
 
@@ -154,7 +231,8 @@ invariants:
   thresholds). Scale by not starting work — never by killing running work.
 - **Stories route by complexity, not habit:** the plan's Complexity rating ×
   the repo's `deliveryProfile` selects lane tier and effort (routing table
-  in the reference). The reviewer is frontier in every profile.
+  in the reference). The reviewer uses the highest review-capable configured
+  lane; no product/model name is assumed.
 - Subscriptions are shared with other hosts: a usage ledger
   (`.factory/usage.jsonl`) paces dispatches, but live limit signals are the
   truth. On a limit: mark the provider cooling, shift the queue to healthy
@@ -163,9 +241,9 @@ invariants:
 - **Quality never downgrades.** Cooling never moves a story down a tier, and
   high-complexity stories never leave the frontier tier — when no suitable
   lane is available, the factory waits; it does not substitute.
-- Every story holds a resource lease (port block, own database on the shared
-  Postgres) recorded in `.worktrees/<slug>/.env.story` — granted at
-  dispatch, dropped at retirement.
+- Every story holds a resource lease (for example a port block and its own
+  datastore namespace or disposable instance) recorded in
+  `.worktrees/<slug>/.env.story` — granted at dispatch, dropped at retirement.
 
 ## Long-Run Discipline
 
@@ -175,14 +253,17 @@ invariants:
   hygiene: `git worktree list`, remove any worktree whose story bead is
   closed or parked, then `git worktree prune`. Do not re-read the whole
   history.
-- **Empty queue ≠ done.** When `bd ready` is empty but acceptance criteria
-  remain unticked, run a gap analysis: parked stories, open rework beads,
-  unmet criteria, missing stories. Feed gaps back through hls-plan-builder and
-  continue.
+- **Empty queue ≠ done — cut the next wave.** Stories are cut just-in-time:
+  when `bd ready` drains but acceptance criteria remain
+  unticked, returning to hls-plan-builder to cut the next wave from the epic
+  design docs — against main as it is *now* — is the normal rhythm, not a
+  replan. Fold in the gap analysis while you're there: parked stories, open
+  rework and finding beads, criteria no wave has covered yet.
 - **Done means evidence.** Finish only when every acceptance criterion in the
-  requirements doc maps to closed stories with verification evidence, the full
-  suite is green on main, and the log records it. Elapsed time, effort, and
-  "the agent said so" are not completion.
+  requirements doc maps to closed stories with verification evidence, every
+  finding bead from the run is closed or human-waived (the Promotion Gate),
+  the full suite is green on main, and the log records it. Elapsed time,
+  effort, and "the agent said so" are not completion.
 - **Usage limits are weather, not failure.** Cooling providers, pauses, and
   window-boundary resumes are normal operation — log them, checkpoint, and
   let the resume ritual pick the run back up.
@@ -214,10 +295,18 @@ invariants:
 - Story work in the coordinator's checkout — even "just a quick fix". The
   checkout stays on main; fixes happen in the story's worktree.
 - Reviewing your own dispatch: the reviewer must be an independent agent, or
-  the review is theater.
+  the review is theater. Independence is a fresh session judging only the
+  durable inputs — not a second human; equally, demanding a non-author human
+  approval for routine story review is the same misreading inverted.
+- Hand-writing or decorating a reviewer prompt. Review contracts freeze the
+  plan-owned input paths before implementation; the packet tool and approved
+  templates own all review prose and bytes after that point.
 - Letting review rounds relitigate accepted code — round N+1 sees only the
   delta from round N.
 - Letting context carry state: any fact needed to resume that isn't in beads,
   the plan, or the log is already lost.
 - Re-dispatching a bounced story with the same goal text. Every retry must add
   the new failure evidence, or it will fail the same way.
+- Letting a shared vendor sandbox become an implicit per-lane dependency.
+  Lanes stay deterministic on simulators; the coordinator schedules the real
+  integration gate with explicit tenant/rate-limit ownership.

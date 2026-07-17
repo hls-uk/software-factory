@@ -3,6 +3,59 @@
 Newest first. One line per skill change, linking the feedback issue where one
 exists.
 
+## 0.7.0 — 2026-07-17
+
+- **Breaking operating-model simplification:** HLS now supports one human
+  operator across one or more laptops/VPS hosts, not multi-human teams.
+  `team-lanes.md`, human-owned source lanes, `.factory/team.json`, integrator/
+  architect split authority, cross-human approvals, and CODEOWNERS generation
+  are removed. New `host-lanes.md` treats machines as capacity/failover
+  domains with one Beads queue, one active coordinator lease, and one operator
+  retaining sign-off, waiver, promotion, credential, deploy, and external-
+  action authority.
+- hls-factory-orchestrate: adds the promotion gate, evidence-input and plan-
+  fidelity checks, real-auth-path ownership, repo-hook preflight, calibrated
+  simulator/real-vendor evidence loop, per-host lane setup, and fresh read-only
+  review sessions. Review independence is context separation; the same
+  operator, host, provider, subscription, and model are allowed.
+- hls-factory-orchestrate: deterministic tamper-evident review packets freeze
+  plan-owned inputs before branching, build canonical full/delta/promotion
+  prompts from exact Git objects and versioned templates, bind hashes and
+  verdicts to base/head, and verify the whole lineage. One operator reviews
+  template-version changes; agents cannot approve their own rulebook.
+- **New skill: hls-architecture** — explicit options and evidence before
+  planning, operator sign-off, Mermaid architecture/design docs, revisit
+  triggers, and third-party simulator calibration. No product stack wins by
+  house policy; requirements and recorded decision criteria decide.
+- hls-plan-builder: requires signed architecture (or an explicit unchanged
+  reference), uses epic design-doc anchors and just-in-time story waves, makes
+  criteria coverage the progress ledger, and carries every evidence-input MUST
+  plus end-to-end reachability and simulator/real-integration proofs.
+- hls-process-init: installs the architecture phase, committed skills lock,
+  portable agent requirements plus per-host local profiles, self-documenting
+  README links, published-report convention, third-party environment ladder,
+  and SHA-pinned fresh-agent review gates without team machinery or fixed
+  product-stack defaults.
+- **New skill: hls-factory-status** — fixed-shape, read-only status across
+  repos, hosts, lanes, gates, PRs, branches, and Beads queues, including local
+  delta snapshots and the per-delivery-repo collector fix.
+- **New skill: hls-publish-report** — optional Markdown-to-PDF convention for
+  documents that genuinely leave a repo, with recorded regeneration and
+  staleness discipline; no PDF was added for this release.
+- **New skill: hls-skill-update** — committed `.factory/skills-lock.json`,
+  Git-native private-repo CHANGELOG inspection, safe run-boundary updates,
+  local-stopgap reconciliation, and a single Beads update lease across hosts.
+- hls-skill-feedback: reads installed versions from the committed skills lock
+  and registers every local stopgap in its divergence list.
+- hls-skill-sweep: releases behavioural changelog entries that consumers read
+  before uptake and routes consumers through hls-skill-update.
+- hls-repo-bootstrap: human-browsable README orientation and a closeout ritual
+  that follows active commit/push authority instead of assuming it.
+- docs: README and AGENTS describe fifteen skills and the single-operator
+  multi-host model; new `docs/factory-method.md` is the authoritative process
+  explanation. Fold-back decisions for every pinned fork commit are recorded
+  in Bead `software-factory-nhb`.
+
 *Versions 0.5.1–0.6.1 were folded back on 2026-07-10 from the
 incept5/i5-software-factory fork (bootstrapped from this repo at 0.5.0),
 which hardened them in a live factory trial ("chivo"); `i5sf-*` evidence

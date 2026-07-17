@@ -39,8 +39,11 @@ the skills.
    confusion to every consumer.
 
 5. **Release.** Update `CHANGELOG.md` (one line per fix, linking the issue),
-   commit, push per the repo's process. Consumers pick up fixes on their next
-   `npx skills add` install/update.
+   commit, push per the repo's process. Consumers uptake the release with the
+   hls-skill-update ritual (re-install against their committed install record,
+   reconcile local stopgaps); the CHANGELOG entry you write here is what
+   their uptake reads before taking the change — name what changed
+   behaviorally, not just which file moved.
 
 6. **Close with evidence.** Close each issue naming the commit, the change
    made, and how it was validated. If the reporter recorded a local stopgap,

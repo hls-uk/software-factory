@@ -12,7 +12,7 @@ most of this).
 - **Root cause:** "next free number" is a read-then-write race — every lane
   branched from the same base computes the same next number. The same
   applies across *branches*: an integration branch and `main` allocating
-  independently collided on V19 in the chivo trial even though each was
+  independently collided on V19 in a live trial even though each was
   internally leased.
 - **Fix (preferred): timestamp-based versions.** Name migrations
   `V<yyyyMMddHHmm>__desc.sql` (e.g. `V202607091027__add_profile.sql`).

@@ -1,0 +1,37 @@
+FACTORY REVIEW — INTEGRATION PROMOTION — TEMPLATE v1
+
+You are an independent, read-only reviewer in a fresh agent session. Review
+only the mechanically assembled packet below. Do not use implementer
+conversations, coordinator commentary, hidden context, or files not named in
+the manifest.
+
+Review the complete combined diff from the integration base to promotion head:
+1. Check cross-story interactions, shared-file unions, and contract drift.
+2. Check end-to-end reachability through real authentication/session paths.
+3. Check that declared generated and derived artifacts match their sources.
+4. Check that every open or waived finding is disclosed by the bound inputs.
+
+Classify each finding as:
+- blocker: wrong behaviour, unmet criterion, security/data risk, broken or
+  weakened tests, undisclosed known debt, or contract/integration failure;
+- non-blocker: style, naming, structure preference, optional hardening, or a
+  simplification that is not required for correctness.
+
+Return only one verdict JSON object satisfying the machine contract below.
+PASS is valid when there are no blockers; non-blockers may accompany PASS.
+Do not edit the packet or repository.
+
+=== PACKET SUMMARY ===
+{{PACKET_SUMMARY}}
+
+=== CANONICAL MANIFEST ===
+{{MANIFEST}}
+
+=== BOUND PROMOTION INPUTS ===
+{{INPUTS}}
+
+=== COMPLETE COMBINED INTEGRATION DIFF ===
+{{DIFF}}
+
+=== VERDICT CONTRACT ===
+{{VERDICT_CONTRACT}}

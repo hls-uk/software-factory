@@ -23,7 +23,7 @@
   ```
 
   Redirect stdout/stderr to a lane log and write the printed pid to a pid
-  file; liveness is `kill -0 $(cat pidfile)`. (Chivo trial: after this fix,
+  file; liveness is `kill -0 $(cat pidfile)`. (Observed trial: after this fix,
   lanes survived ~12 coordinator exits and 2 API-drop session deaths.)
 
 ## Missing GNU tools

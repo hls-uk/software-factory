@@ -35,8 +35,8 @@ Numbered, testable. Given/When/Then preferred.
 ## Constraints
 
 - **Hard:** non-negotiables (compliance, budget, existing API contracts, stack mandates).
-- **Preferences:** defaults that may be overridden with good reason
-  (e.g. NestJS backend, React + TanStack + Tailwind frontend).
+- **Preferences:** project-specific preferences that may be overridden with
+  evidence (existing runtime, deployment environment, approved libraries).
 
 ## Assumptions
 

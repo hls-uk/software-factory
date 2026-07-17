@@ -12,7 +12,7 @@
   `QUARKUS_HTTP_TEST_PORT=<leased>` — **and move every coupled URL with it**
   (e.g. the JWKS/issuer URL env var must point at the same leased port).
   Record the lease in `.env.story`; verification commands must read ports
-  from env, never hardcode. (Chivo trial leases: 18091–18094; zero
+  from env, never hardcode. (Observed trial leases: 18091–18094; zero
   collisions across three concurrent instances.)
 - **Coordinator notes:** grep the repo's `%test` config for the coupled
   URLs before assuming the port var alone is enough — the failure mode when

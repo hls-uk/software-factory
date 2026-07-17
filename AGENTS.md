@@ -1,18 +1,20 @@
 # Software Factory — Agent Operating Manual
 
 Higher Level Software's public set of coding-agent skills: the factory loop
-(requirements → plan → orchestrate → verify → learn) packaged as installable
-skills. This file is the source of truth for working in this repo; `CLAUDE.md`
-just points here.
+(requirements → architecture → plan → orchestrate → verify → learn) packaged
+as installable skills. It serves one human operator who may run isolated agent
+sessions across multiple laptops or VPS hosts. This file is the source of
+truth for working in this repo; `CLAUDE.md` just points here.
 
 ## What This Repo Is
 
-- `skills/<name>/SKILL.md` — the product. Eleven skills, each self-contained
+- `skills/<name>/SKILL.md` — the product. Fifteen skills, each self-contained
   (its own `references/`), installable individually via `npx skills add`.
 - `scripts/validate-skills.mjs` — the quality gate. Run it after every skill
   edit; CI runs it on every push.
 - `docs/` — this repo's wiki: [index](docs/index.md), append-only
-  [log](docs/log.md), and the [bootstrap brief](docs/BOOTSTRAP-BRIEF.md).
+  [log](docs/log.md), the [Factory Method](docs/factory-method.md), and the
+  [bootstrap brief](docs/BOOTSTRAP-BRIEF.md).
 - `.beads/` — embedded beads work tracking. `bd ready` is the queue.
 
 ## Rules
@@ -27,11 +29,16 @@ just points here.
 4. **Log sessions** in [docs/log.md](docs/log.md) — provenance format
    (Driven by / Executed by / What changed / Evidence), newest first.
 5. **Session end:** validator green, beads state reported, log entry written,
-   changes committed. Reusable lessons go in the log or a skill fix — an
-   answer that lives only in chat is lost.
+   and changes left as one reviewable handoff. Commit/push only when the active
+   profile or user grants authority. Reusable lessons go in the log or a skill
+   fix — an answer that lives only in chat is lost.
 6. **Releases:** every skill change gets a `CHANGELOG.md` line. Feedback from
    consumer projects arrives via the tracker in `.factory/feedback.json`;
    process it with `skills/hls-skill-sweep`.
+7. **Keep the method current:** any process change updates
+   [docs/factory-method.md](docs/factory-method.md) in the same session.
+   Published artifacts are regenerated only when that source is actually
+   published; Markdown remains authoritative.
 
 ## Boundaries
 

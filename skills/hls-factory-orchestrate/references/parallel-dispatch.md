@@ -13,74 +13,56 @@ ready stories, the three-story cap).
 
 ```json
 {
-  "coordinator": { "harness": "claude-code", "launch": "/goal via hls-factory-orchestrate" },
+  "coordinator": { "launch": "<durable goal command>" },
   "deliveryProfile": "balanced",
+  "billingPolicy": "subscriptions-only",
   "implementers": [
     {
-      "id": "claude-frontier",
-      "provider": "claude",
+      "id": "local-frontier",
+      "provider": "<provider-a>",
       "tier": "frontier",
-      "dispatch": "claude -p --model claude-opus-4-8 \"$(cat goal.txt)\"",
+      "dispatch": "<absolute command using goal.txt>",
       "maxConcurrent": 1
     },
     {
-      "id": "claude-strong",
-      "provider": "claude",
+      "id": "local-strong",
+      "provider": "<provider-a>",
       "tier": "strong",
-      "dispatch": "claude -p --model claude-sonnet-5 \"$(cat goal.txt)\"",
+      "dispatch": "<absolute command using goal.txt>",
       "maxConcurrent": 1
     },
     {
-      "id": "codex-frontier",
-      "provider": "openai",
-      "tier": "frontier",
-      "dispatch": "codex exec --model gpt-5.5-codex -c model_reasoning_effort=\"{effort}\" \"$(cat goal.txt)\"",
-      "maxConcurrent": 1
-    },
-    {
-      "id": "codex-spark",
-      "provider": "openai",
+      "id": "local-fast",
+      "provider": "<provider-b>",
       "tier": "fast",
       "enabled": false,
-      "dispatch": "codex exec --model gpt-5.3-codex-spark \"$(cat goal.txt)\"",
-      "note": "research preview — enable when your plan has access"
-    },
-    {
-      "id": "claude-api-overflow",
-      "provider": "claude",
-      "tier": "frontier",
-      "billing": "api",
-      "enabled": false,
-      "dispatch": "claude -p --model claude-opus-4-8 \"$(cat goal.txt)\"",
-      "note": "explicit per-token API lane — off unless a human enables it; see Billing Guardrail"
+      "dispatch": "<absolute command using goal.txt>",
+      "note": "enable only after local evaluation proves the allowed low-risk scope"
     }
   ],
-  "reviewer": { "harness": "claude-code", "tier": "frontier", "dispatch": "claude -p \"$(cat review-prompt.txt)\"" },
+  "reviewer": { "tier": "frontier", "dispatch": "<absolute read-only fresh-session command>" },
   "host": { "maxLoadPerCore": 0.8, "minFreeMemGb": 4, "minFreeDiskGb": 10 },
-  "limits": { "claude": { "windowHours": 5 }, "openai": { "windowHours": 5 } }
+  "limits": { "<provider-a>": { "windowHours": "<observed>" } }
 }
 ```
 
-Tiers: **frontier** (best available — Opus 4.8 class, GPT-5.5-Codex at
-xhigh), **strong** (near-frontier at a fraction of cost and quota — Sonnet 5
-class: ~63 vs ~69 SWE-bench Pro against Opus 4.8, 40% cheaper per token),
-**fast** (real-time models like GPT-5.3-Codex-Spark: 1,000+ tok/s but a
-large accuracy cliff — for mechanical edits and trivial rework only, never
-whole stories). `{effort}` in a dispatch command is substituted from the
-routing table where the harness supports an effort flag; otherwise encode
-effort as separate lane entries.
+Tiers are local capability classes, not permanent model names: **frontier**
+is the strongest verified coding/reasoning lane available to the operator;
+**strong** is a lower-cost lane proven on normal well-specified stories;
+**fast** is an optional lane proven only for narrow mechanical work. Record
+the evaluation date and evidence in the host profile, because model names and
+capabilities drift. `{effort}` may be substituted where a harness supports it;
+otherwise encode effort as separate lane entries.
 
-Concurrency: lanes on the same provider **share that provider's slot** —
-default one in-flight story per provider (VPS: Claude + Codex = two stories
-in parallel; supervised workstation: one story total). Raise per-repo only
-after verification has proven parallel-safe. Running both vendors in
-parallel is the point: it doubles effective subscription throughput and no
-single provider's window stalls the factory.
+Concurrency: lanes on the same provider may share limits. Start with one
+in-flight story on the current host and raise the cap only after verification
+has proven the repo, host, and provider limits parallel-safe. Multiple healthy
+providers or hosts add resilience, but are never required.
 
 ## Billing Guardrail — subscriptions only, by default
 
-The factory runs on the engineers' **subscription** plans (Claude Max,
-ChatGPT). Per-token API billing is never used unless a lane explicitly opts
+The factory defaults to the operator's configured **subscription** plans.
+Per-token API billing is never used unless a lane explicitly opts
 in with `"billing": "api"` in `agents.json`; the default for every lane,
 coordinator, and reviewer is `"billing": "subscription"` whether stated or
 not. Three rules enforce it:
@@ -90,7 +72,11 @@ not. Three rules enforce it:
   `OPENAI_API_KEY` silently flips the CLI to per-token billing with no
   visible change in behavior. Unless a lane declares `"billing": "api"`,
   dispatch and supervisor launch commands strip the keys:
-  `env -u ANTHROPIC_API_KEY -u OPENAI_API_KEY <dispatch cmd>`.
+  `env -u ANTHROPIC_API_KEY -u OPENAI_API_KEY <dispatch cmd>`. Repos that
+  prohibit AI API-key configuration outright declare
+  `"billingPolicy": "subscriptions-only"`: a set key is then a **preflight
+  failure** — refuse and have the operator remove it from their shell config
+  ([lane-setup.md](lane-setup.md)) — not something to strip around.
 - **Preflight the auth mode, not just the model.** Before wave 1, verify
   each provider is on subscription auth through the same shell the
   dispatches use (concrete per-CLI commands are in the hls-tech-playbook
@@ -102,9 +88,14 @@ not. Three rules enforce it:
   never downgrades": a paused factory costs time; a silent billing
   escalation costs money nobody approved. If a repo genuinely wants an
   API-billed overflow lane, it declares one explicitly (`"billing": "api"`,
-  ideally `"enabled": false` until a human turns it on).
+  ideally `"enabled": false` until the operator turns it on).
 
 ## Lane Preflight
+
+Preflight assumes each host's lanes exist, are authenticated as configured,
+and reflect that host's actual CLIs and models — that is the per-host
+lane-setup ritual ([lane-setup.md](lane-setup.md)), run once when adding the
+host and after any tool/model/subscription change.
 
 Before the first dispatch of a run — and after any `agents.json` change —
 probe every lane with a trivial exec ("Reply with exactly: OK") using the
@@ -234,11 +225,11 @@ into the story goal, dropped at retirement:
 - **Ports:** lane *n* owns block `4000+100n … 4099+100n` (`PORT`,
   `PORT_BASE`). Verification commands must take ports from env, never
   hardcode.
-- **Database:** one shared host Postgres; each story gets its own database
-  `story_<slug>` (`createdb` at lease, `dropdb` at retirement), injected as
-  `DATABASE_URL`. Other services follow the same pattern (e.g. Redis DB
-  index = lane number) before reaching for per-story docker-compose stacks —
-  shared-service-with-namespacing keeps N parallel verifications cheap.
+- **Datastore/service state:** follow the plan's repo-specific isolation
+  scheme. Each story gets its own namespace or disposable instance, injected
+  through environment variables and removed at retirement. Prefer cheap
+  namespacing where it provides real isolation; use separate instances when
+  the technology cannot isolate safely.
 - **Idempotency contract:** a story's verification starts by resetting its
   *own* database (drop-and-migrate or truncate-and-seed), touches only its
   leased resources, and is safe to re-run at any time. hls-plan-builder
@@ -253,9 +244,9 @@ into the story goal, dropped at retirement:
   lease scheme are in the hls-tech-playbook skill's migrations reference).
   Where a repo stays on small integers, lease each story a range at
   dispatch, state it in the goal, record it in `.env.story` — and remember
-  **leases only work within a single allocation authority**: the chivo
-  trial's integration branch and `main` allocated independently and both
-  took V19. Whatever the scheme, the goal must state the naming rule
+  **leases only work within a single allocation authority**: one observed
+  run allocated independently on its integration branch and `main`, and both
+  took the same version. Whatever the scheme, the goal must state the naming rule
   explicitly or implementers revert to next-free-integer.
 
 ## Verify Scope Under Parallelism

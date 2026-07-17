@@ -10,7 +10,7 @@
 - **Root cause:** Gradle forks test JVMs at **512m max heap by default**;
   almost no build file sets `Test.maxHeapSize`. A single-fork suite retains
   heap across all classes and one day outgrows 512m — then it OOMs even run
-  *alone*. Concurrency doesn't cause it; it makes it fire sooner. (Chivo
+  *alone*. Concurrency doesn't cause it; it makes it fire sooner. (Observed
   trial: two concurrent gates both died; the serial re-run died too; root
   cause was the default.)
 - **Fix:** set `test { maxHeapSize = "2g" }` (or `org.gradle.jvmargs` for

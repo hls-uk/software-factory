@@ -20,7 +20,7 @@ stops below.
 
 ## The Loop
 
-hls-requirements-interview → hls-plan-builder → hls-factory-orchestrate → (per story)
+hls-requirements-interview → hls-architecture → hls-plan-builder → hls-factory-orchestrate → (per story)
 implement → verify → PR review (bounded, delta-only follow-ups) → evidence →
 close.
 
@@ -38,11 +38,27 @@ Run all of these locally before any story is accepted:
 All gates run on a laptop with no cloud dependency; they are idempotent and
 parallel-safe (ports and connection strings from env only).
 
+## Third-Party Integration Ladder
+
+- Developer lanes and CI use vendor-protocol simulators through the same
+  production adapter; only endpoint and credential binding changes.
+- `<shared integration environment>` uses real vendor sandbox/test endpoints,
+  synthetic or vendor-approved subjects, and a serialized `<probe command or
+  protected workflow>` gate.
+- Staging, when established, mirrors production deployment and uses the closest
+  authorised non-production vendor environment.
+- Credentials live in `<operator-controlled secret store>` and are reached with temporary,
+  least-privilege, audited identity. Agents normally invoke probes that resolve
+  secret values server-side; values never enter source, prompts, CLI arguments,
+  logs, screenshots, or evidence.
+- Every new redacted real-world observation updates the vendor evidence record,
+  simulator profile/fixture, and regression tests before the affected gate is
+  green. Production is never exploratorily probed without explicit authority.
+
 ## Shared Verification Resources
 
-- Postgres: single host instance; one database per story
-  (`story_<slug>`), leased/dropped by the orchestrator, injected as
-  `DATABASE_URL`.
+- Primary datastore/service: `<repo-specific shared or isolated scheme>`;
+  each story receives its own namespace or disposable instance through env.
 - Ports: leased per story as `PORT`/`PORT_BASE` — never hardcoded.
 - <other shared services and their namespacing scheme>
 
@@ -62,10 +78,14 @@ branch + remove worktree.
 
 Agent roles (coordinator / implementer / reviewer) and their dispatch
 commands are defined in `.factory/agents.json` — that file is authoritative;
-this section records the same choices for humans.
-Coordinator model: <e.g. strongest available Claude>; implementer:
-<e.g. Codex at xhigh reasoning>; reviewer: <independent agent — never the
-implementer>.
+this section records the same choices for the operator.
+Coordinator: <strongest locally available configured lane>; implementer:
+<configured lane selected by complexity/capability>; reviewer: <independent
+agent — a fresh read-only session that never sees the implementer context;
+same operator, provider, and model allowed; PASS pinned to the head SHA>.
+Each host binds these roles to its actual CLIs and subscriptions in the
+gitignored `.factory/agents.local.json`; rerun lane setup after any host,
+CLI, model, subscription, or capability change.
 
 ## Session Rituals
 

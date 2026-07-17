@@ -55,8 +55,10 @@ or
 Use [references/feedback-template.md](references/feedback-template.md). The
 non-negotiables:
 
-- **Skill + version:** skill name and the installed version or source commit
-  (check the skill directory or the install record).
+- **Skill + version:** skill name and the installed source commit — read it
+  from the repo's install record (`.factory/skills-lock.json`, maintained by
+  the hls-skill-update skill); if the repo has no record yet, say so in the
+  issue and note the install date.
 - **What happened vs. expected:** the exact instruction followed, the exact
   failure (trimmed command output beats prose).
 - **Minimal repro:** enough for a maintainer in a clean repo to see it.
@@ -68,9 +70,11 @@ non-negotiables:
 ## Local Stopgap
 
 If the defect blocks current work, you may patch the *installed copy* in the
-host repo — but record the divergence in the filed issue and in the host
-repo's log, so the sweep can reconcile it. Never let a silent local fork
-become permanent.
+host repo — but record the divergence in the filed issue, in the host repo's
+log, **and in the `divergences` list of `.factory/skills-lock.json`** (the
+hls-skill-update skill's install record) — that register is what lets the
+next uptake drop your fork the moment upstream supersedes it. Never let a
+silent local fork become permanent.
 
 ## The Cascade
 

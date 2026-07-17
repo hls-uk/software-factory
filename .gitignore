@@ -8,6 +8,8 @@
 .DS_Store
 node_modules/
 *.log
+__pycache__/
+*.py[cod]
 
 # Installed skill mirrors are generated — skills/ is the source of truth
 .claude/skills/

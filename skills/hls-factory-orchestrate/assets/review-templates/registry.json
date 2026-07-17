@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "approval": {
+        "approvedAt": "2026-07-16T14:42:30Z",
+        "approvedBy": "upstream-v1-review",
+        "separationOfDuty": "single-operator-versioned-template",
+        "status": "approved"
+      },
+      "path": "assets/review-templates/v1/promotion.txt",
+      "reviewType": "promotion",
+      "sha256": "a35f1751e6970c2695e3da4317624cbe1faeddfda32d57fed903a23a2d9a5991",
+      "version": "v1"
+    },
+    {
+      "approval": {
+        "approvedAt": "2026-07-16T14:42:30Z",
+        "approvedBy": "upstream-v1-review",
+        "separationOfDuty": "single-operator-versioned-template",
+        "status": "approved"
+      },
+      "path": "assets/review-templates/v1/story-delta.txt",
+      "reviewType": "story-delta",
+      "sha256": "67e873dff9368f30d944ba2a4c5d22fcc04496f1e5fed4d75d3d8a75976bc0af",
+      "version": "v1"
+    },
+    {
+      "approval": {
+        "approvedAt": "2026-07-16T14:42:30Z",
+        "approvedBy": "upstream-v1-review",
+        "separationOfDuty": "single-operator-versioned-template",
+        "status": "approved"
+      },
+      "path": "assets/review-templates/v1/story-full.txt",
+      "reviewType": "story-full",
+      "sha256": "704f14338a88bdb092124b07986c690f07f90659ce9484e40ad7135ed18ecea2",
+      "version": "v1"
+    }
+  ]
+}

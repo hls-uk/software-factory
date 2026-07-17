@@ -75,6 +75,13 @@ live in skills and wiki pages loaded on demand; a fat entrypoint taxes every
 session. It must state: what the repo is, the wiki rules above, the session
 rituals below, and the hard boundaries (secrets, external actions).
 
+For project repos, the top-level README is the *human* entrypoint and must
+stay browsable: a short "Where things are" section linking the
+architecture, the tech decisions and their why, and the current plan with
+live progress (the hls-process-init skill wires the exact paths). A repo a
+newcomer can't navigate from its README is not self-documenting, however
+good the wiki.
+
 ## 4. Wire the Compounding Loop
 
 The wiki without the loop is a graveyard. The loop is three rituals and a
@@ -89,7 +96,9 @@ ledger:
 - **Session end — the closeout check:** Did this session create durable wiki
   knowledge? Did it reveal a repeatable process worth promoting? Is every
   reusable lesson written as an `LRN-###` rather than left in chat? Then log
-  the session in `wiki/log.md`, commit, and push — never leave work unpushed.
+  the session in `wiki/log.md`, then follow the repo's active commit/push
+  policy. Never treat a memory ritual as permission to cross an approval
+  boundary.
 - **The learnings ledger:** each `LRN-###` carries a status — `candidate`
   (may be generic), `project-only`, `promoted`, or `rejected` (kept, so the
   reasoning isn't re-litigated). On a cadence (weekly early on, monthly at

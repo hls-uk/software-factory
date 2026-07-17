@@ -1,100 +1,97 @@
 # Software Factory
 
-Higher Level Software's coding-agent skills: a complete loop for agent-driven
-delivery — **requirements → plan → orchestrate → verify → learn** — packaged
-as [Agent Skills](https://vercel.com/docs/agent-resources/skills) installable
-into Claude Code, Codex, Cursor, and 70+ other agents.
+Higher Level Software's coding-agent skills: a complete loop for evidence-led
+delivery — **requirements → architecture → plan → orchestrate → verify →
+learn** — packaged as installable [Agent Skills](https://vercel.com/docs/agent-resources/skills).
+
+This factory is designed for **one human operator**. The operator may run many
+isolated agent sessions across a laptop, additional laptops, or VPS hosts;
+machines add capacity and resilience, never another decision authority.
+
+New here? Read [The Factory Method](docs/factory-method.md).
 
 ## Install
 
 ```sh
-npx skills add hls-uk/software-factory                    # pick skills interactively
-npx skills add hls-uk/software-factory --skill '*'        # everything
+npx skills add hls-uk/software-factory                    # choose interactively
+npx skills add hls-uk/software-factory --skill '*'        # install everything
 npx skills add hls-uk/software-factory --skill hls-beads --skill hls-factory-orchestrate
 ```
 
-Run from an [eve](https://vercel.com/docs/eve) project directory and the CLI
-offers to install into your eve building agent.
+Consumer repos record the installed source commit and skill list in
+`.factory/skills-lock.json`. The lifecycle is **install** (`hls-process-init`),
+**update** (`hls-skill-update`), and **feed back** (`hls-skill-feedback` →
+`hls-skill-sweep`).
 
-## The Skills
+## Skills
 
-**Delivery loop**
-
-| Skill | What it does |
-|---|---|
-| [hls-requirements-interview](skills/hls-requirements-interview/SKILL.md) | Build requirements by interviewing the user — testable acceptance criteria, surfaced assumptions. |
-| [hls-plan-builder](skills/hls-plan-builder/SKILL.md) | Requirements → stories sized for one-agent handoff, each with its own verification, registered as a beads graph. |
-| [hls-factory-orchestrate](skills/hls-factory-orchestrate/SKILL.md) | The long-running coordinator: dispatch whole stories to implementing agents via `/goal`, verify locally, run each PR through a bounded review, loop for days until every criterion has evidence. |
-| [hls-tech-playbook](skills/hls-tech-playbook/SKILL.md) | Growing per-stack pitfall/workaround memory (migrations, JVM/Gradle, Quarkus, git worktrees, macOS, harness CLIs) — consulted on demand when a run hits a stack-specific wall. |
-
-**Substrate**
+### Delivery loop
 
 | Skill | What it does |
 |---|---|
-| [hls-repo-bootstrap](skills/hls-repo-bootstrap/SKILL.md) | LLM Wiki + compounding-learning loop for new repos — every session leaves the repo smarter. |
-| [hls-process-init](skills/hls-process-init/SKILL.md) | Set up a repo's engineering process for the factory: autonomous (VPS) or supervised (workstation) mode, gates, rituals. |
-| [hls-process-revamp](skills/hls-process-revamp/SKILL.md) | Adopt the factory in an existing repo without steamrolling working conventions. |
-| [hls-beads](skills/hls-beads/SKILL.md) | Work tracking with [beads](https://github.com/gastownhall/beads) in embedded mode — ready queue, claims, evidence-based closes. |
-| [hls-dev-browser](skills/hls-dev-browser/SKILL.md) | Web UI verification with [dev-browser](https://github.com/sawyerhood/dev-browser) — persistent pages, Playwright assertions, screenshot evidence. |
+| [hls-requirements-interview](skills/hls-requirements-interview/SKILL.md) | Interviews the operator into confirmed, testable requirements. |
+| [hls-architecture](skills/hls-architecture/SKILL.md) | Evaluates expensive-to-reverse choices against explicit project criteria and produces an operator-signed architecture. |
+| [hls-plan-builder](skills/hls-plan-builder/SKILL.md) | Turns requirements and architecture into criteria-traced, just-in-time story waves and a Beads graph. |
+| [hls-factory-orchestrate](skills/hls-factory-orchestrate/SKILL.md) | Runs the long-lived story loop: dispatch, verify, deterministic review, promotion, evidence, repeat. |
+| [hls-factory-status](skills/hls-factory-status/SKILL.md) | Produces a fixed-shape, read-only report across repos, hosts, lanes, gates, and queues. |
+| [hls-tech-playbook](skills/hls-tech-playbook/SKILL.md) | Reusable stack-specific failure diagnoses and proven workarounds. |
 
-**Evolution loop**
+### Substrate
 
 | Skill | What it does |
 |---|---|
-| [hls-skill-feedback](skills/hls-skill-feedback/SKILL.md) | File structured improvement issues from any consumer project back to this repo's tracker. |
-| [hls-skill-sweep](skills/hls-skill-sweep/SKILL.md) | Sweep filed feedback, apply fixes, validate, release — the same loop any repo can run on its own internal skills. |
+| [hls-repo-bootstrap](skills/hls-repo-bootstrap/SKILL.md) | Adds durable repo memory, entrypoints, logs, decisions, and learnings. |
+| [hls-process-init](skills/hls-process-init/SKILL.md) | Installs the factory process in a new repo, including gates and per-host configuration. |
+| [hls-process-revamp](skills/hls-process-revamp/SKILL.md) | Adopts the factory incrementally in an established repo. |
+| [hls-beads](skills/hls-beads/SKILL.md) | Embedded durable work tracking: queue, claims, dependencies, blockers, and evidence closes. |
+| [hls-dev-browser](skills/hls-dev-browser/SKILL.md) | Browser-driven UI verification with assertions and screenshot evidence. |
+| [hls-publish-report](skills/hls-publish-report/SKILL.md) | Builds stakeholder PDFs from selected Markdown sources while keeping Markdown authoritative. |
 
-## How It Fits Together
+### Evolution loop
 
-An agent in a consumer project runs `hls-requirements-interview`, then
-`hls-plan-builder`, then hands the plan to `hls-factory-orchestrate`, which dispatches
-stories to implementing agents, verifies each against local gates
-(`dev-browser` for UI), and puts every story through a bounded PR review —
-blockers fixed, follow-ups delta-only, capped rounds — tracking everything in
-`beads`. When a skill misfires
-along the way, `hls-skill-feedback` files it here; `hls-skill-sweep` turns those
-reports into released fixes. `hls-repo-bootstrap` and `hls-process-init`/
-`hls-process-revamp` set new and existing repos up to run this way.
+| Skill | What it does |
+|---|---|
+| [hls-skill-feedback](skills/hls-skill-feedback/SKILL.md) | Files structured field feedback and registers local stopgaps. |
+| [hls-skill-sweep](skills/hls-skill-sweep/SKILL.md) | Triages feedback, fixes skills, validates, and releases. |
+| [hls-skill-update](skills/hls-skill-update/SKILL.md) | Checks the committed install record, reads the release delta, reinstalls, and reconciles stopgaps. |
 
-Stack defaults where skills need one: NestJS (backend), React + TanStack +
-Tailwind (frontend) — defaults, not mandates.
+## How it fits together
 
-## Running the Factory
+Requirements provide numbered acceptance criteria. Architecture makes the
+choices that stories must inherit. Planning cuts only the next dispatchable
+wave and restates every applicable MUST. Orchestration gives each story to an
+agent in an isolated worktree, re-runs its gates, and sends a mechanically
+bound packet to a fresh read-only reviewer session. Any commit invalidates the
+review until the exact new head is reviewed.
 
-Launch the coordinator with a durable directive — `/goal` (or `/loop` for
-recurring sweeps) in Claude Code, `/goal` in Codex, or headless
-(`claude -p` / `codex exec`) on a VPS. Agent roles — who coordinates, who
-implements, who reviews, and the exact dispatch commands — live in the host
-repo's `.factory/agents.json`, scaffolded by `hls-process-init`.
-Implementers run as parallel **tiered lanes** (frontier + strong per vendor,
-e.g. Opus 4.8 and Sonnet 5 alongside GPT-5.5-Codex): each story is routed to
-the cheapest tier matching its planned Complexity under the repo's
-`deliveryProfile` (quality / balanced / throughput), with the reviewer
-pinned frontier in every profile. Usage-limit awareness governs the run —
-cooling providers shift the queue to same-tier lanes, exhausted windows
-pause and resume at the boundary — alongside host capacity checks and
-per-story resource leases (ports, own database on a shared Postgres) that
-keep parallel verification cheap and local-first. Multiple humans can share
-one repo via master-plan lanes and an integrator role
-([team-lanes](skills/hls-factory-orchestrate/references/team-lanes.md)).
-Full guide:
-[running-the-factory](skills/hls-factory-orchestrate/references/running-the-factory.md);
-scaling and limits:
-[parallel-dispatch](skills/hls-factory-orchestrate/references/parallel-dispatch.md);
-review rules:
-[review-protocol](skills/hls-factory-orchestrate/references/review-protocol.md).
+One operator retains requirement sign-off, architecture sign-off, risk waiver,
+promotion, and external-action authority. The same operator, subscription,
+provider, and host may be used for every agent role; independence comes from
+fresh context, read-only permissions, and pinned evidence—not a second human.
+
+Multiple hosts share one Beads queue and one active coordinator lease. Each
+host records its actual commands and capabilities in a gitignored
+`.factory/agents.local.json`; the committed `.factory/agents.json` holds only
+portable requirements. See [host lanes](skills/hls-factory-orchestrate/references/host-lanes.md),
+[lane setup](skills/hls-factory-orchestrate/references/lane-setup.md), and
+[review packets](skills/hls-factory-orchestrate/references/review-packets.md).
+
+The factory has no prescribed product stack. Architecture options are judged
+against the confirmed requirements, existing estate, operator/host constraints,
+security, cost, reversibility, and verification evidence.
 
 ## Development
 
 ```sh
-node scripts/validate-skills.mjs   # quality gate — must pass before commit
-bd ready                           # work queue (beads, embedded)
+node scripts/validate-skills.mjs
+python3 skills/hls-factory-orchestrate/scripts/test_review_packet.py -v
+bd ready
 ```
 
-This repo follows its own skills: work is tracked in beads, sessions are
-logged in [docs/log.md](docs/log.md), and skill changes land in
-[CHANGELOG.md](CHANGELOG.md). See [AGENTS.md](AGENTS.md) for the operating
-manual and [docs/index.md](docs/index.md) for the wiki.
+This repo follows its own process: work is in Beads, sessions are recorded in
+[docs/log.md](docs/log.md), and each skill change is released in
+[CHANGELOG.md](CHANGELOG.md). See [AGENTS.md](AGENTS.md) and the
+[wiki index](docs/index.md).
 
 ## License
 

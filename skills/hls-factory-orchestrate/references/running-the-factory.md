@@ -32,8 +32,8 @@ preference:
 A print-mode session ends the moment the coordinator finishes a reply — and
 the harness's background tasks **and their child processes die with it**. A
 headless coordinator must therefore never dispatch lanes through its
-harness's background-task feature (first seen live: chivo trial run 1, both
-lanes killed mid-story). Instead:
+harness's background-task feature (a live trial showed both lanes being
+killed mid-story). Instead:
 
 - Dispatch each lane OS-durably from the story worktree. `nohup … & disown`
   guards only SIGHUP — on macOS (no `setsid` binary) lanes still died with
@@ -75,19 +75,24 @@ analysis) that cheaper models fumble.
 ## Agent Role Assignment
 
 Roles live in the host repo at `.factory/agents.json`. Implementers are a
-**pool of tiered lanes** — typically a frontier and a strong lane per
-vendor, so both subscriptions earn at once and each story runs on the
-cheapest model that matches its Complexity rating (the `deliveryProfile`
-routing table). Per-machine overrides go in the gitignored
-`.factory/agents.local.json`. Full schema, tiers, routing table, defaults,
-usage-limit handling, and host thresholds:
-[parallel-dispatch.md](parallel-dispatch.md). Multi-human projects add
-`.factory/team.json` and a master plan: [team-lanes.md](team-lanes.md).
+**pool of tiered lanes** mapped to the models and tools actually available on
+each host, so each story runs on the least costly lane that still matches its
+Complexity rating and required capabilities. Per-machine overrides go in the gitignored
+`.factory/agents.local.json` — each host generates its own file with the
+first-run lane-setup ritual ([lane-setup.md](lane-setup.md)) and reruns it
+after any CLI/model/subscription/host change. Full schema, tiers,
+routing table, defaults, usage-limit handling, and host thresholds:
+[parallel-dispatch.md](parallel-dispatch.md). When the operator uses more
+than one host, apply the shared-queue and failover rules in
+[host-lanes.md](host-lanes.md).
 
 `dispatch` is the literal command the coordinator runs (goal/prompt text
 substituted). Any harness/CLI works if it can take a prompt and work a
-branch. The reviewer must not be the implementer of the story under review;
-cross-vendor pairing catches more.
+branch. Implementer goals come from the handoff template; reviewer prompts
+come only from the deterministic packet builder in
+[review-packets.md](review-packets.md) and are dispatched verbatim. The
+reviewer must not be the implementer of the story under review; cross-vendor
+pairing catches more.
 
 ## Where Defaults Live
 
@@ -99,15 +104,18 @@ Precedence, most specific wins:
    operating mode; keep the two consistent.
 3. The skill defaults — what this skill assumes when neither exists:
    coordinator = the strongest model in the session you launched from;
-   implementers = one Claude (Opus-class) lane + one Codex (xhigh) lane on a
-   VPS, a single lane on a workstation;
+   implementers = the locally available lane or lanes that pass preflight;
    reviewer = a fresh session of the coordinator's harness.
 
-Cross-vendor role pairing (e.g. Claude coordinates and reviews, Codex
-implements) is deliberate: an independent reviewer with different failure
-modes catches what the implementer's own family misses. Same-vendor works;
-prefer separation of *sessions* at minimum — an agent must never review its
-own diff.
+Review independence is **agent-context separation, not human separation**
+(the full rules: [review-protocol.md](review-protocol.md)): the reviewer is
+a fresh session that never receives the implementer's conversation, judges
+only the mechanically bound durable inputs (criteria, diff, evidence, spec
+docs), runs read-only, and records its verdict pinned to the exact base/head,
+template, manifest, prompt, and diff hashes. The same operator, subscription,
+provider, and model are allowed. Using a different provider family may add
+useful failure-mode diversity, but it is a preference rather than a
+requirement. An agent must never review its own diff.
 
 ## Worktrees in Practice
 

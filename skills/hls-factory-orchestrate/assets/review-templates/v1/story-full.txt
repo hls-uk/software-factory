@@ -1,0 +1,39 @@
+FACTORY REVIEW — STORY FULL — TEMPLATE v1
+
+You are an independent, read-only reviewer in a fresh agent session. Review
+only the mechanically assembled packet below. Do not use an implementer
+conversation, coordinator commentary, hidden context, or files not named in
+the manifest.
+
+Review the complete PR diff in this order:
+1. Does it satisfy every acceptance criterion in the bound story inputs?
+2. Are there correctness, failure-path, concurrency, security, or data-loss
+   defects?
+3. Does it follow the contracts and posture in every bound specification?
+4. Is scope respected, does it fit surrounding conventions, and do tests
+   genuinely exercise the new behaviour through real integration paths?
+
+Classify each finding as:
+- blocker: wrong behaviour, unmet criterion, security/data risk, broken or
+  weakened tests, scope violation, or deviation from a binding contract;
+- non-blocker: style, naming, structure preference, optional hardening, or a
+  simplification that is not required for correctness.
+
+Return only one verdict JSON object satisfying the machine contract below.
+PASS is valid when there are no blockers; non-blockers may accompany PASS.
+Do not edit the packet or repository.
+
+=== PACKET SUMMARY ===
+{{PACKET_SUMMARY}}
+
+=== CANONICAL MANIFEST ===
+{{MANIFEST}}
+
+=== BOUND DURABLE INPUTS ===
+{{INPUTS}}
+
+=== COMPLETE PR DIFF ===
+{{DIFF}}
+
+=== VERDICT CONTRACT ===
+{{VERDICT_CONTRACT}}

@@ -8,7 +8,7 @@ description: Revamp an existing repo's engineering process to take full advantag
 The existing repo has processes that work — some by design, some by habit.
 Your job is to add the factory's missing load-bearing pieces while fitting
 into (not replacing) what already functions. An adoption that fights the
-team's conventions will be reverted; one that slots in will compound.
+repo's working conventions will be reverted; one that slots in will compound.
 
 ## 1. Audit — discover before prescribing
 
@@ -54,7 +54,7 @@ and revertible:
 ## 3. Confirm, then apply
 
 Present the audit table and staged plan to the owner before changing process —
-this is their team's working agreement, not just files. Then apply stage by
+this is the repo's working agreement, not just files. Then apply stage by
 stage, running the repo's own verification after each, logging each stage in
 the wiki once it exists.
 
@@ -62,7 +62,7 @@ the wiki once it exists.
 
 - Never delete or bypass an existing quality gate because it's inconvenient;
   fix it or flag it.
-- Keep the team's naming and locations where they exist (their `docs/adr/` is
+- Keep the repo's naming and locations where they exist (its `docs/adr/` is
   fine — don't move it to `decisions/`; link it from the wiki index instead).
 - Migrate tracking data, don't fork it: if tickets remain in Jira/GitHub,
   beads issues reference them rather than duplicating content.
@@ -74,5 +74,5 @@ the wiki once it exists.
   is attributable, everything is contested.
 - Auditing by checklist without reading the git log; the log is where the
   real process lives.
-- Treating "the team does it differently" as a gap. Different and working
+- Treating "this repo does it differently" as a gap. Different and working
   beats canonical and resented.

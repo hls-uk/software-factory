@@ -8,7 +8,8 @@ description: Initialise a new repo's engineering process to run as an agentic so
 Give a new repo everything an agent workforce needs to deliver production
 quality without a human re-explaining the rules each session. The output is
 not ceremony — it is a small set of files and conventions that make the
-factory loop (requirements → plan → orchestrate → verify → learn) runnable.
+factory loop (requirements → architecture → plan → orchestrate → verify →
+learn) runnable.
 
 ## 1. Choose the Operating Mode
 
@@ -38,16 +39,25 @@ In order, each verified before the next:
 2. **Work tracking** — run the hls-beads skill's setup (`bd init`, embedded).
 3. **Skills** — install the factory skills where agents discover them:
    `npx skills add <owner>/<skills-repo>` (all agents), and commit the
-   install choice to the repo docs so future sessions repeat it.
+   install choice to the repo docs so future sessions repeat it. Record the
+   install in `.factory/skills-lock.json` — source, HEAD commit, skill list —
+   per the hls-skill-update skill: project-level installs are invisible to
+   the skills CLI's own tracking, and this record is what update checks and
+   feedback reports read.
 4. **Factory config** — create `.factory/feedback.json` pointing at the
    tracker that owns skill improvements (see the hls-skill-feedback skill),
    and `.factory/agents.json` assigning the coordinator, implementer lanes
-   (with tiers), reviewer, and the `deliveryProfile` (format, routing table,
-   and defaults: the hls-factory-orchestrate skill's
+   (with tiers), reviewer, the `deliveryProfile`, and the billing policy
+   (format, routing table, and defaults: the hls-factory-orchestrate skill's
    `references/running-the-factory.md` and `references/parallel-dispatch.md`).
-   Gitignore `.factory/agents.local.json` (per-machine overrides). For
-   multi-human projects, add `.factory/team.json` and a master plan per the
-   `references/team-lanes.md` reference. Leave credentials out; name the
+   The committed file states **portable factory requirements** — tiers,
+   profiles, independence, billing rules, and required capabilities — never
+   an assumption that every host has every CLI or subscription. Gitignore
+   `.factory/agents.local.json`; run the orchestrate skill's per-host
+   lane-setup ritual (`references/lane-setup.md`) on each laptop/VPS to
+   verify auth, models, worktrees, and capabilities before writing local
+   overrides. For multiple hosts, follow its `references/host-lanes.md`
+   single-operator coordination rules. Leave credentials out; name only the
    access mechanism.
 5. **Verification harness** — the factory cannot run without executable
    gates. Ensure `test`, `lint`, and `build` commands exist and run green
@@ -59,19 +69,44 @@ In order, each verified before the next:
      lives on.
    - **Parallel-safe:** ports and connection strings come from env
      (`PORT`, `DATABASE_URL`), never hardcoded. Shared services are
-     namespaced, not duplicated — one host Postgres with a database per
-     story beats a docker stack per story.
+     namespaced where practical, not blindly duplicated; the plan records
+     the repo-specific scheme.
    - **Idempotent:** verification resets its own state first and is safe to
      re-run at any time.
-   For stacks: default to NestJS (backend) and React + TanStack + Tailwind
-   (frontend) unless the requirements say otherwise — defaults, not mandates.
+   If the product has third-party integrations, also establish the environment
+   ladder before delivery starts: local lanes/CI use evidence-calibrated
+   vendor-protocol simulators through the production adapter; one durable
+   shared non-production integration environment exercises real vendor test
+   endpoints with synthetic/vendor-approved data; staging, when created,
+   mirrors production deployment. Record an observation manifest format and
+   require each new real behaviour to update the simulator and regression
+   tests. Put credentials in an operator-controlled secret store with temporary,
+   least-privilege, audited access; prefer allowlisted probes/runners that
+   resolve values server-side, and keep all secret values out of repo config.
 6. **Evidence convention** — create `evidence/` with a one-line README:
    dated subdirectories per story, screenshots and verification write-ups.
-7. **Worktree convention** — add `.worktrees/` to `.gitignore`. Story work
+7. **Self-documenting README** — the top-level README carries a short
+   "Where things are" section from which a human reaches, in one or two
+   clicks, at any point in the project: **(a) the architecture**
+   (`docs/architecture/` — the signed-off doc, diagrams rendered inline),
+   **(b) the tech choices and why** (the architecture doc's options tables
+   and `docs/decisions/`), **(c) the master plan and progress so far**
+   (`docs/plans/` — its Criteria Coverage table is the live progress
+   ledger). Add the links now, pointing at the paths the loop will fill —
+   a reader should never need repo archaeology to answer those three
+   questions. Alongside it, adopt the published-reports convention
+   (`docs/published/` PDFs for documents that leave the repo — the
+   hls-publish-report skill).
+8. **Worktree convention** — add `.worktrees/` to `.gitignore`. Story work
    happens in coordinator-managed worktrees there (branch `story/<slug>`,
    dir `.worktrees/<slug>`); the main checkout never does story work. Rules:
    the hls-factory-orchestrate skill's Worktree Rules section.
-8. **CI** — a workflow that runs the verification commands on every push.
+9. **CI** — a workflow that runs the verification commands on every push and,
+   where PR review is required, verifies a fresh-agent review PASS pinned to
+   the current head plus promotion disclosures. Review independence is agent-
+   context separation, so do not invent a second-human approval requirement.
+   Gates that live only in one coordinator session do not survive host or
+   session failover.
 
 ## 3. Write the Process Doc
 
@@ -80,8 +115,10 @@ Create `docs/process.md` from
 prominently from the agent entrypoint. It must state: the operating mode, the
 exact verification commands, the dispatch mechanism for implementing agents,
 the session rituals (start: sync + `bd ready`; end: push + log), and the hard
-stops. An agent reading only AGENTS.md and docs/process.md must be able to
-work correctly.
+stops. For third-party systems it must also name the local simulator, shared
+integration gate, staging posture, observation-feedback rule, and credential/
+probe mechanism. An agent reading only AGENTS.md and docs/process.md must be
+able to work correctly.
 
 ## 4. Prove It
 
