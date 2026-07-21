@@ -3,6 +3,16 @@
 Newest first. One line per skill change, linking the feedback issue where one
 exists.
 
+## 0.8.0 — 2026-07-21
+
+- hls-requirements-interview: adds the delivery interview/contract, separates `operatingMode`, `modelRoutingProfile`, `assuranceProfile`, and `releaseStage`, defaults unknown assurance to standard, and milestones criteria by first-use/operational/canonical/deferred.
+- hls-architecture: adds a concise recorded rapid architecture for bounded reversible work, retains signed standard/assured paths, and restores deeper review on consequence triggers.
+- hls-plan-builder: makes the first usable journey a rapid wave gate, separates story consequence risk from model-routing complexity, and carries release milestones plus linked deferrals.
+- hls-factory-orchestrate: routes verification/review/promotion by assurance plus risk, preserves standard/assured protections, blocks rapid P0/P1/invariants, permits contract-accepted linked P2/P3, and migrates model routing from legacy `deliveryProfile` to `modelRoutingProfile`.
+- hls-process-init: installs the four-field delivery contract, profile-specific verification guidance, first-usable proof, invariant stops, and explicit legacy config migration without inferring assurance or authority.
+- **New skill: hls-issue-iteration** — selects GitHub feedback without mirroring the backlog into Beads, then reproduces, classifies, implements, proportionately verifies, checks the affected user journey, and closes or requeues with evidence.
+- docs/validation: Factory Method, README/wiki/design/log, release notes, and the skill validator now make risk-calibrated delivery authoritative and keep the Vita pilot as a separate unclaimed follow-up (`software-factory-5sp`).
+
 ## 0.7.0 — 2026-07-17
 
 - **Breaking operating-model simplification:** HLS now supports one human

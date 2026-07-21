@@ -8,7 +8,9 @@ diagram goes in a fenced ` ```mermaid ` block so GitHub renders it inline.
 ---
 id: ARCH-<slug>
 requirements: docs/requirements/<slug>.md
-status: draft            # draft | signed-off
+status: draft            # draft | recorded | signed-off
+assuranceProfile: rapid | standard | assured
+releaseStage: experiment | beta | operational | canonical
 signed_off_by:           # name, set at sign-off
 signed_off_date:         # YYYY-MM-DD, set at sign-off
 updated: YYYY-MM-DD
@@ -17,6 +19,22 @@ updated: YYYY-MM-DD
 # Architecture: <Title>
 
 One paragraph: what this system is and the shape we chose for it.
+
+## Delivery Boundary
+
+- **First usable journey:** <end-to-end journey this architecture enables>
+- **Exposure and users:** <named private users | internal group | public>
+- **Authority and recovery:** <allowed changes plus reset/repair/rollback path>
+- **Escalation triggers:** <conditions requiring deeper architecture review or
+  explicit human authority>
+
+For `rapid`, this document may be a concise architecture note: retain Delivery
+Boundary, the chosen system shape, significant choices, risks, revisit
+triggers, and the first vertical slice; omit non-applicable sections. Set
+`status: recorded` only for private, reversible experiment/beta work. Secrets,
+auth, destructive or canonical mutations, money/human decisions, concurrency,
+recovery, cross-tenant behaviour, and architecture/security boundary changes
+require the standard or assured path and `status: signed-off`.
 
 ## Context & Constraints
 

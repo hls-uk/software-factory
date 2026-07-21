@@ -8,7 +8,7 @@ truth for working in this repo; `CLAUDE.md` just points here.
 
 ## What This Repo Is
 
-- `skills/<name>/SKILL.md` — the product. Fifteen skills, each self-contained
+- `skills/<name>/SKILL.md` — the product. Sixteen skills, each self-contained
   (its own `references/`), installable individually via `npx skills add`.
 - `scripts/validate-skills.mjs` — the quality gate. Run it after every skill
   edit; CI runs it on every push.

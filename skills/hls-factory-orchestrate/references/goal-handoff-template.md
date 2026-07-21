@@ -14,6 +14,9 @@ Context: you are in worktree .worktrees/<slug> on branch story/<slug> —
 treat this directory as the repo root and never write outside it. Covers
 acceptance criteria <numbers> of docs/requirements/<slug>.md. <One sentence
 of state the agent can't infer.>
+Delivery contract: assurance `<rapid | standard | assured>`, release stage
+`<experiment | beta | operational | canonical>`, story risk
+`<routine | mandatory-review>`; do not cross its escalation triggers.
 
 Scope: <files/areas from the story>. Do not touch anything outside it; do
 not modify tests except to add coverage for this story; do not create,
@@ -33,7 +36,9 @@ Done/stop: done when verification passes, the diff is committed to
 story/<slug>, and a PR is opened (push the branch and say so if you cannot
 open PRs) with a summary of evidence in its description. Stop and report
 instead of guessing if you need credentials, hit a design contradiction, or
-must touch out-of-scope files.
+must touch out-of-scope files. Also stop before public/external, destructive,
+irreversible, canonical, human/commercial, or authority-cutover action not
+already and explicitly authorised by the contract.
 ```
 
 ## On a bounce (retry after failed verification)

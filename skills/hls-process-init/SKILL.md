@@ -1,6 +1,6 @@
 ---
 name: hls-process-init
-description: Initialise a new repo's engineering process to run as an agentic software factory — operating mode (fully autonomous on a VPS or supervised on a workstation), work tracking, LLM wiki, verification gates, evidence conventions, and agent entrypoints. Use when starting a repo that agents will build in, or when asked to "set up the process" for agent-driven delivery.
+description: Initialise a new repo's risk-calibrated agentic software factory — separate operating mode, model routing, assurance profile, and release stage; then install work tracking, verification gates, evidence conventions, and agent entrypoints. Use when starting a repo agents will build in or when asked to "set up the process" for agent-driven delivery.
 ---
 
 # Process Init
@@ -11,10 +11,27 @@ not ceremony — it is a small set of files and conventions that make the
 factory loop (requirements → architecture → plan → orchestrate → verify →
 learn) runnable.
 
-## 1. Choose the Operating Mode
+## 1. Choose the Delivery Contract
 
-Ask the user (or read the brief), then record the choice — it changes agent
-behavior everywhere downstream:
+Ask the user (or read the brief), then record four orthogonal choices. Never
+use one as a proxy for another:
+
+- `operatingMode`: `autonomous` or `supervised` — human availability and
+  interaction cadence.
+- `modelRoutingProfile`: `quality`, `balanced`, or `throughput` — lane/model
+  selection only.
+- `assuranceProfile`: `rapid`, `standard`, or `assured` — sequencing, review,
+  and evidence depth. Unknown defaults to `standard`; urgency does not imply
+  `rapid`.
+- `releaseStage`: `experiment`, `beta`, `operational`, or `canonical` — the
+  current authority and promotion boundary.
+
+Also record exposure, data criticality, the first usable journey, accepted
+defects, release blockers, escalation triggers, and the reset/repair/rollback
+path. Ask who uses it, what can be recovered, which consequences are
+unacceptable, and what can wait until after first use.
+
+Operating mode changes agent behaviour everywhere downstream:
 
 | | `autonomous` (VPS) | `supervised` (workstation) |
 |---|---|---|
@@ -27,6 +44,18 @@ behavior everywhere downstream:
 
 Both modes keep the same hard-stop core: autonomy never widens into
 irreversible or outward-facing actions without standing authorization.
+
+Assurance changes delivery depth without changing those hard stops:
+
+| Profile | Default delivery behaviour |
+|---|---|
+| `rapid` | Named private users, reversible experiment/beta, first usable vertical slice first, focused verification, risk-triggered review, P2/P3 defects linked for iteration |
+| `standard` | Normal architecture, planning, independent review, and existing verification gates |
+| `assured` | Full architecture/review/evidence path with expanded security, failure, recovery, and traceability checks |
+
+Rapid must escalate before public, irreversible, or canonical use. Secrets,
+destructive operations, external configuration, human/commercial gates, test
+integrity, and credentials remain invariant stops in every profile.
 
 ## 2. Install the Substrate
 
@@ -47,7 +76,8 @@ In order, each verified before the next:
 4. **Factory config** — create `.factory/feedback.json` pointing at the
    tracker that owns skill improvements (see the hls-skill-feedback skill),
    and `.factory/agents.json` assigning the coordinator, implementer lanes
-   (with tiers), reviewer, the `deliveryProfile`, and the billing policy
+   (with tiers), reviewer, `operatingMode`, `modelRoutingProfile`,
+   `assuranceProfile`, `releaseStage`, and the billing policy
    (format, routing table, and defaults: the hls-factory-orchestrate skill's
    `references/running-the-factory.md` and `references/parallel-dispatch.md`).
    The committed file states **portable factory requirements** — tiers,
@@ -58,10 +88,17 @@ In order, each verified before the next:
    verify auth, models, worktrees, and capabilities before writing local
    overrides. For multiple hosts, follow its `references/host-lanes.md`
    single-operator coordination rules. Leave credentials out; name only the
-   access mechanism.
+   access mechanism. If an older config uses `deliveryProfile`, migrate only
+   its model-routing value (`quality`, `balanced`, or `throughput`) to
+   `modelRoutingProfile`. Do not infer assurance, autonomy, or release
+   authority from the legacy field; record those decisions separately.
 5. **Verification harness** — the factory cannot run without executable
    gates. Ensure `test`, `lint`, and `build` commands exist and run green
    (even if the suite is one smoke test), and record them in the process doc.
+   Standard and assured retain the repo's existing protections. Rapid may run
+   story-scoped and affected gates while assembling the slice, but the full
+   configured suite and first usable user journey must pass before the slice
+   is accepted; any risk trigger restores the full review path.
    Three hard properties, designed in from day one:
    - **Local-first:** every gate runs on a laptop with no cloud dependency —
      anything that can't gets a fake/stub or is non-gating. Deployment shape
@@ -88,7 +125,7 @@ In order, each verified before the next:
 7. **Self-documenting README** — the top-level README carries a short
    "Where things are" section from which a human reaches, in one or two
    clicks, at any point in the project: **(a) the architecture**
-   (`docs/architecture/` — the signed-off doc, diagrams rendered inline),
+   (`docs/architecture/` — the recorded/signed-off doc, diagrams rendered inline),
    **(b) the tech choices and why** (the architecture doc's options tables
    and `docs/decisions/`), **(c) the master plan and progress so far**
    (`docs/plans/` — its Criteria Coverage table is the live progress
@@ -102,7 +139,8 @@ In order, each verified before the next:
    dir `.worktrees/<slug>`); the main checkout never does story work. Rules:
    the hls-factory-orchestrate skill's Worktree Rules section.
 9. **CI** — a workflow that runs the verification commands on every push and,
-   where PR review is required, verifies a fresh-agent review PASS pinned to
+   where the assurance profile or a risk trigger requires PR review, verifies
+   a fresh-agent review PASS pinned to
    the current head plus promotion disclosures. Review independence is agent-
    context separation, so do not invent a second-human approval requirement.
    Gates that live only in one coordinator session do not survive host or
@@ -117,15 +155,18 @@ exact verification commands, the dispatch mechanism for implementing agents,
 the session rituals (start: sync + `bd ready`; end: push + log), and the hard
 stops. For third-party systems it must also name the local simulator, shared
 integration gate, staging posture, observation-feedback rule, and credential/
-probe mechanism. An agent reading only AGENTS.md and docs/process.md must be
-able to work correctly.
+probe mechanism. It must also state the four delivery fields, first usable
+target, profile-specific acceptance behaviour, promotion boundary, and
+escalation triggers. An agent reading only AGENTS.md and docs/process.md must
+be able to work correctly.
 
 ## 4. Prove It
 
-Initialization is done when you have run one story through the whole loop —
-even a trivial one ("add a health endpoint"): requirements noted, planned,
-dispatched or implemented, verified through the gates, evidence captured,
-bead closed, log written. A process that has never executed is a hypothesis.
+Initialization is done when you have run one first-usable vertical slice
+through the chosen loop — even a trivial one ("open the dashboard and observe
+health"): requirements noted, planned, dispatched or implemented, verified
+through the profile-appropriate gates, evidence captured, bead closed, log
+written. A process that has never executed is a hypothesis.
 
 ## Anti-patterns
 

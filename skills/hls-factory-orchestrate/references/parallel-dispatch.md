@@ -14,7 +14,10 @@ ready stories, the three-story cap).
 ```json
 {
   "coordinator": { "launch": "<durable goal command>" },
-  "deliveryProfile": "balanced",
+  "operatingMode": "supervised",
+  "modelRoutingProfile": "balanced",
+  "assuranceProfile": "standard",
+  "releaseStage": "beta",
   "billingPolicy": "subscriptions-only",
   "implementers": [
     {
@@ -45,6 +48,12 @@ ready stories, the three-story cap).
   "limits": { "<provider-a>": { "windowHours": "<observed>" } }
 }
 ```
+
+These four fields are independent. `modelRoutingProfile` only selects model
+tier/effort; it never grants autonomy, lowers assurance, or authorizes a later
+release stage. Migrate a legacy `deliveryProfile` value only when it is one of
+`quality`, `balanced`, or `throughput`; otherwise stop and resolve the
+ambiguous config. Missing assurance defaults to `standard`.
 
 Tiers are local capability classes, not permanent model names: **frontier**
 is the strongest verified coding/reasoning lane available to the operator;
@@ -130,12 +139,12 @@ your interactive shell; prefer absolute paths in dispatch commands.
 Record probe results in the usage ledger. A failing lane is disabled with a
 note, never worked around silently.
 
-## Story Routing — complexity × delivery profile
+## Story Routing — complexity × model routing profile
 
 Every story carries a `Complexity` line from hls-plan-builder (`high` —
 architectural, ambiguous, or high blast radius; `standard` — well-specified
 feature work; `low` — mechanical, narrow, well-trodden). The repo's
-`deliveryProfile` sets the trade-off. The coordinator picks lane tier +
+`modelRoutingProfile` sets the trade-off. The coordinator picks lane tier +
 effort per story:
 
 | Complexity | `quality` | `balanced` (default) | `throughput` |
@@ -146,7 +155,7 @@ effort per story:
 
 Rules that hold in **every** profile:
 
-- **The reviewer is frontier, always.** Review is the cheapest stage in the
+- **When independent review is required, the reviewer is frontier, always.** Review is the cheapest stage in the
   loop and the last defence before merge; the expensive failure is rework,
   not review tokens. Never downgrade it to save quota.
 - **High-complexity stories never leave the frontier tier.** Review catches

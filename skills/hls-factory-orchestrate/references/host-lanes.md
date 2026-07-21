@@ -22,9 +22,10 @@ accepts risk, and authorises promotion.
 ## Configuration
 
 The committed `.factory/agents.json` declares portable requirements and
-defaults: integration branch, delivery profile, billing policy, lane tiers,
-review rules, and any required capabilities. It contains no credentials or
-host-specific absolute paths.
+defaults: integration branch, separate operating/model-routing/assurance/
+release-stage fields, billing policy, lane tiers, review rules, and any
+required capabilities. It contains no credentials or host-specific absolute
+paths.
 
 Each host carries a gitignored `.factory/agents.local.json`, created by
 [lane-setup.md](lane-setup.md), with:

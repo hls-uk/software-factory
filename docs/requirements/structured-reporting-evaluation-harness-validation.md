@@ -1,15 +1,22 @@
 ---
 id: REQ-structured-reporting-evaluation-harness-validation
-status: confirmed
+status: superseded
 mode: greenfield
 updated: 2026-07-17
 owner: Adam Chesney
 target_repo: hls-uk/structured-reporting-evaluation-harness
 delivery: one factory sprint
 supersedes: REQ-structured-reporting-model-trial
+superseded_by: REQ-structured-reporting-laptop-agent-harness-trial
 ---
 
 # Structured Reporting Evaluation Harness Validation
+
+> **Superseded — do not build.** Adam replaced this no-comparison validation
+> brief on 2026-07-17 with the focused
+> [Laptop-Native Structured Reporting Agent Harness Trial](structured-reporting-laptop-agent-harness-trial.md),
+> limited to Claude and Codex on fictional data. This file remains only as an
+> audit record and must not be used as factory input.
 
 Build and validate a public-ready engineering harness that demonstrates HLS's
 ability to process XBRL, HTML, and PDF inputs; invoke multiple model-provider

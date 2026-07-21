@@ -1,5 +1,84 @@
 # Log
 
+## [2026-07-21 22:04 BST] release | v0.8.0 risk-calibrated delivery implementation
+- Driven by: Adam (approved `DESIGN-risk-calibrated-delivery` on Bead
+  `software-factory-aly`, then activated the repo-only implementation goal)
+- Executed by: Codex
+- What changed: implemented the four-field delivery contract across
+  requirements, architecture, planning, orchestration, and process setup;
+  added proportional rapid/standard/assured paths; added installable
+  `hls-issue-iteration`; made the Factory Method authoritative; updated the
+  public catalog, validator, operating manual, design status, and 0.8.0 release
+  notes. Rapid now prioritises a reversible first usable vertical slice,
+  retains consequence-triggered independent review, blocks P0/P1/invariants,
+  and permits only contract-accepted, visible linked P2/P3 issues.
+- Decisions: `operatingMode`, `modelRoutingProfile`, `assuranceProfile`, and
+  `releaseStage` are orthogonal; unknown assurance defaults to standard;
+  standard/assured protections remain intact; rapid must re-plan before public,
+  irreversible, operational-without-recovery, or canonical use. GitHub Issues
+  own human-facing feedback, while Beads owns only selected multi-session
+  execution/dependencies.
+- Acceptance evidence: AC1 → `hls-requirements-interview` confirmation gate;
+  AC2 → four-field templates plus validator enforcement; AC3 → plan-builder's
+  foundation-only rejection; AC4 → rapid P0/P1 block and linked P2/P3 release
+  gate; AC5 → mandatory consequence triggers in orchestrator/review protocol;
+  AC6 → architecture/plan/orchestrator escalation gates; AC7 → explicit
+  preservation of standard/assured story review, full-suite, and promotion
+  rules; AC8 → `hls-issue-iteration` and Factory Method tracker ownership.
+  AC9–10 remain intentionally pending on unclaimed Vita follow-up
+  `software-factory-5sp`; this session did not edit Vita.
+- Evidence: Beads epic `software-factory-1ih` and children; validator passed
+  after every skill edit and final checks reported 16 skills, 0 errors, 0
+  warnings; review-packet adversarial tests passed 5/5; tracked/untracked
+  whitespace checks passed; link and delivery-residue checks passed; a clean
+  temporary Git repo installed and discovered `hls-issue-iteration` with its
+  self-contained reference. No deploy, credentials, external configuration,
+  commit, push, Vita edit, reset, clean, or overwrite was performed; existing
+  structured-reporting changes were preserved.
+
+## [2026-07-21 21:36 BST] design | Risk-calibrated delivery proposal from the Vita trial
+- Driven by: Adam (asked why `vdb-uk/vita-platform` was taking too long, then
+  asked for the resulting plan as a Software Factory design document)
+- Executed by: Codex
+- What changed: added proposed design `DESIGN-risk-calibrated-delivery`, which
+  separates operating mode, model routing, assurance profile, and release
+  stage; adds an upfront delivery/risk contract; makes the first usable journey
+  a rapid-plan invariant; preserves consequence-triggered review and hard
+  safety boundaries; defines non-duplicative GitHub Issues/Beads roles; and
+  proposes a bounded Vita beta pilot plus one future issue-iteration skill.
+- Decisions: the current Factory Method remains authoritative until the proposal
+  is approved and released; rapid means reversible beta rather than permanently
+  lower quality; unknown risk defaults to standard; secrets, public exposure,
+  destructive actions, legacy mutation, canonical data, and human commercial
+  gates never become low-assurance shortcuts.
+- Evidence: Bead `software-factory-6cd`; live Vita snapshot `b489d67` showed 110
+  post-setup commits, 28 review verdicts, about 21,025 API-source lines versus
+  37 web-source lines, and E3-3 starting before a usable dashboard. Before the
+  Bead was created, this designated clone exported 30 issues, migrated Beads
+  from v49 to the v1.1.0 schema, and pushed the migrated Dolt state so other
+  clones can bootstrap instead of migrating independently.
+
+## [2026-07-17 11:24 BST] requirements | Laptop-native Claude/Codex structured-reporting trial
+- Driven by: Adam (reframed the trial as an installed-harness laptop workflow,
+  then simplified the model scope to Claude and Codex only)
+- Executed by: Codex
+- What changed: added confirmed requirement
+  `REQ-structured-reporting-laptop-agent-harness-trial`, a draft architecture,
+  and first-wave protocol/runner designs. The product is one local Python runner
+  controlled by either Claude Code or Codex, with two models and two efforts per
+  family, an eight-configuration frozen matrix, detached/resumable cells,
+  deterministic scoring, at most two shared improvement challengers, and an
+  evidence-generated README with Mermaid and accessible tables. The earlier
+  validation and study-shaped PRDs are both marked superseded.
+- Decisions: no external orchestrator, VPS, daemon, third model provider, direct
+  provider SDK, or dashboard; immutable files are evidence and SQLite is only a
+  rebuildable local index. The maximum default live run is 416 cells. Only
+  fictional reporting packs are allowed, and results describe the tested
+  harness/model/effort configurations without a general format or market claim.
+- Evidence: Bead `software-factory-qxh`; requirements AC-01–AC-16; local probes
+  found installed Claude Code and Codex CLIs with explicit model, effort, and
+  structured-output controls. Architecture remains draft pending Adam's sign-off.
+
 ## [2026-07-17 10:38 BST] release | v0.7.0 commit and remote alignment
 - Driven by: Adam (authorised commit and push and asked to get the remote
   sorted)

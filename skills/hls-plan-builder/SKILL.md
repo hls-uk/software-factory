@@ -1,6 +1,6 @@
 ---
 name: hls-plan-builder
-description: Turn a confirmed requirements doc and signed-off architecture into an implementation plan — epics anchored by design docs, stories cut just-in-time in waves sized for one-agent handoff, each with binding acceptance criteria and its own verification — and register the current wave as a beads dependency graph. Use after requirements are confirmed and the architecture is signed off, before implementation or orchestration begins — and again whenever the ready queue drains while acceptance criteria remain uncovered.
+description: Turn confirmed requirements and proportional architecture into a risk-calibrated implementation plan — a first usable vertical slice for rapid delivery or fully protected standard/assured waves, with binding criteria, explicit story risk, verification, deferrals, and a beads dependency graph. Use before implementation/orchestration and whenever the ready queue drains with criteria uncovered.
 ---
 
 # Plan Builder
@@ -14,13 +14,19 @@ proves itself done.
 1. **Read the requirements doc** (`docs/requirements/<slug>.md`). If its status
    is not `confirmed` or it has open questions, stop and run the
    hls-requirements-interview loop first — planning against draft requirements
-   compounds guesswork.
+   compounds guesswork. Read its separate `operatingMode`,
+   `modelRoutingProfile`, `assuranceProfile`, and `releaseStage` plus the
+   first usable target, accepted defects, blockers, recovery path, and
+   escalation triggers. If assurance is absent, record the `standard` default
+   before planning.
 
-2. **Read the signed-off architecture**
+2. **Read the proportional architecture**
    (`docs/architecture/<slug>-architecture.md`, produced by the
-   hls-architecture skill). If it is missing or its status is not
-   `signed-off`, stop and run that phase — planning against unsettled
-   architecture relitigates it one story at a time. Plans **inherit** the
+   hls-architecture skill). `standard` and `assured` require status
+   `signed-off`; eligible `rapid` work may use status `recorded`. Any risk
+   trigger, or public, irreversible, operational-without-recovery, or
+   canonical use, requires re-planning at the raised profile and a signed-off
+   architecture. Plans **inherit** the
    architecture's decisions: design decisions here are deltas within it,
    never reversals; a plan that needs to reverse one sends the architecture
    doc back for amendment and re-sign first. Work with no architectural
@@ -59,6 +65,13 @@ proves itself done.
      gets a frontier model), `standard` (well-specified feature work), or
      `low` (mechanical, narrow, well-trodden). Judge by ambiguity and blast
      radius, not size — a one-line change to an auth check is `high`.
+   - Carries a separate **Risk** classification: `routine` or
+     `mandatory-review`, with the triggering consequence named. Authentication,
+     authorisation, secrets/exposure, destructive or canonical state, money or
+     human/commercial gates, concurrency/idempotency/recovery/cross-tenant
+     behaviour, and architecture/security boundaries are always
+     `mandatory-review` in every assurance profile. Complexity routes models;
+     risk routes assurance. Never use one as the other.
    - Maps to acceptance criteria by number. Every criterion is covered by at
      least one story; a story with no criterion is scope creep — cut it or
      take it back to requirements.
@@ -84,12 +97,25 @@ proves itself done.
      profile/fixture and regression tests before the integration gate is
      green (or record an explicit operator-approved deferral).
 
+   Under `rapid`, the first wave MUST name and complete one real operator
+   journey end to end, include the minimum UI/API/data wiring, fit the recorded
+   active-time target, preserve the prior authority, retain reset/rollback,
+   carry focused executable checks, and name an issue destination for every
+   deferred criterion or accepted defect. A foundation-only or backend-only
+   first wave is invalid when a safe usable journey exists, unless the
+   operator explicitly approves the delay and its reason. Standard and assured
+   retain their existing requirements-fidelity, verification, and review
+   protections.
+
 6. **Write the plan** to `docs/plans/<slug>-plan.md` using
    [references/plan-template.md](references/plan-template.md). The Criteria
    Coverage table is the **master progress ledger** — the canonical answer
    to "where are we?": the orchestrator ticks it with evidence as stories
    close, and the repo's README links to it (see hls-process-init). Epic
-   status is computed from beads, never hand-maintained.
+   status is computed from beads, never hand-maintained. The coverage ledger
+   also records each criterion's required release milestone and deferral/issue
+   link, so later-stage criteria do not accidentally block a rapid beta or
+   disappear from the canonical gate.
 
 7. **Register the current wave in beads.** One issue per story in the wave,
    dependencies wired so `bd ready` yields only truly unblocked work —
@@ -128,7 +154,9 @@ proves itself done.
   Declare what each story needs in its Resources line.
 - The riskiest story runs earliest. Front-load unknowns; back-load polish.
 - Include a "story 0" when needed: scaffold, CI, test harness — the things
-  that make every later story's verification possible.
+  that make every later story's verification possible. In a rapid plan,
+  include that work in the first vertical slice or record why it must precede
+  the usable journey; it is not a standalone definition of value.
 
 ## Anti-patterns
 

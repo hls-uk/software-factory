@@ -6,14 +6,14 @@ updated: 2026-07-17
 owner: Adam Chesney
 target_repo: hls-uk/structured-reporting-model-trial
 delivery: one factory sprint
-superseded_by: REQ-structured-reporting-evaluation-harness-validation
+superseded_by: REQ-structured-reporting-laptop-agent-harness-trial
 ---
 
 # Structured Reporting Model Trial
 
 > **Superseded — do not build.** This study-shaped PRD was replaced on
-> 2026-07-17 by
-> [Structured Reporting Evaluation Harness Validation](structured-reporting-evaluation-harness-validation.md).
+> 2026-07-17 by the focused
+> [Laptop-Native Structured Reporting Agent Harness Trial](structured-reporting-laptop-agent-harness-trial.md).
 > It is retained only as an audit record and must not be used as factory input.
 
 Build and run a small, reproducible real-world trial that measures how the

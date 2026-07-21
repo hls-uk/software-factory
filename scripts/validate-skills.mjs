@@ -13,6 +13,8 @@
 // Repo-level checks:
 //   - at least one skill exists
 //   - README.md mentions every skill (warning only)
+//   - delivery-contract skills retain the four orthogonal control fields
+//   - rapid planning/orchestration and issue ownership invariants are present
 //
 // Usage: node scripts/validate-skills.mjs   (exit 1 on any error)
 
@@ -25,6 +27,7 @@ const skillsDir = join(repoRoot, "skills");
 
 const errors = [];
 const warnings = [];
+const skillSources = new Map();
 const error = (skill, msg) => errors.push(`${skill}: ${msg}`);
 const warn = (skill, msg) => warnings.push(`${skill}: ${msg}`);
 
@@ -98,6 +101,7 @@ for (const dir of skillDirs) {
     continue;
   }
   const raw = readFileSync(skillPath, "utf8");
+  skillSources.set(dir, raw);
   const parsed = parseFrontmatter(raw, dir);
   if (!parsed) continue;
   const { fields, body } = parsed;
@@ -138,6 +142,47 @@ if (existsSync(readmePath)) {
   }
 } else {
   warnings.push("README.md missing at repo root");
+}
+
+const deliveryContractSkills = [
+  "hls-requirements-interview",
+  "hls-architecture",
+  "hls-plan-builder",
+  "hls-factory-orchestrate",
+  "hls-process-init",
+  "hls-issue-iteration",
+];
+const deliveryFields = [
+  "operatingMode",
+  "modelRoutingProfile",
+  "assuranceProfile",
+  "releaseStage",
+];
+
+for (const skill of deliveryContractSkills) {
+  const source = skillSources.get(skill);
+  if (!source) {
+    error(skill, "required by the risk-calibrated delivery contract");
+    continue;
+  }
+  for (const field of deliveryFields) {
+    if (!source.includes(`\`${field}\``))
+      error(skill, `delivery contract must name \`${field}\` explicitly`);
+  }
+}
+
+const deliveryInvariants = new Map([
+  ["hls-plan-builder", ["first usable", "foundation-only", "mandatory-review"]],
+  ["hls-factory-orchestrate", ["P0/P1", "P2/P3", "mandatory-review"]],
+  ["hls-issue-iteration", ["GitHub Issues", "Beads", "user journey"]],
+]);
+
+for (const [skill, phrases] of deliveryInvariants) {
+  const source = skillSources.get(skill) || "";
+  for (const phrase of phrases) {
+    if (!source.toLowerCase().includes(phrase.toLowerCase()))
+      error(skill, `risk-calibrated delivery invariant missing: ${phrase}`);
+  }
 }
 
 for (const w of warnings) console.warn(`WARN  ${w}`);

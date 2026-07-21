@@ -1,6 +1,6 @@
 ---
 name: hls-factory-orchestrate
-description: Run the software factory as the top-level coordinating agent — take confirmed requirements and deliver them by dispatching whole stories through configured agent lanes, verifying every result locally, putting each story through bounded deterministic review, and looping until every acceptance criterion has evidence. Use when asked to coordinate, orchestrate, or autonomously deliver a planned body of work.
+description: Run the software factory as the top-level coordinating agent — dispatch planned stories through configured model lanes, then apply verification, review, promotion, and issue routing according to the delivery contract, story risk, and invariant safety stops. Use when asked to coordinate, orchestrate, or autonomously deliver a planned body of work.
 ---
 
 # Factory Orchestrate
@@ -31,11 +31,14 @@ branch it is *plus* main itself.
 ## Preconditions
 
 - A confirmed requirements doc (`docs/requirements/<slug>.md`) — else run
-  hls-requirements-interview.
-- A signed-off architecture doc (`docs/architecture/<slug>-architecture.md`,
-  status `signed-off` — the hls-architecture skill), or a plan that records
-  `architecture: unchanged`. The sign-off is reserved for the operator: an
-  agent never self-approves it.
+  hls-requirements-interview. It must record separate `operatingMode`,
+  `modelRoutingProfile`, `assuranceProfile`, and `releaseStage`; missing
+  assurance defaults to `standard`, never `rapid`.
+- An architecture doc (`docs/architecture/<slug>-architecture.md`) with status
+  `signed-off`, or `recorded` only for an eligible rapid experiment/beta; a
+  plan may instead record `architecture: unchanged`. The sign-off is reserved
+  for the operator: an agent never self-approves it. Any escalation trigger
+  restores the signed-off architecture gate.
 - A plan with per-story verification (`docs/plans/<slug>-plan.md`) and the
   current story wave registered in beads — else run hls-plan-builder.
 - Working local verification: the test/lint/build commands in the plan run
@@ -53,6 +56,24 @@ branch it is *plus* main itself.
   an opt-in local hook (derived-artifact regeneration, contract sync) is an
   escape waiting to happen: honor it during the run, and file feedback
   (hls-skill-feedback) that it belongs in the repo's verify gate.
+
+## Resolve the Delivery Contract
+
+Before dispatch, copy the plan's four fields into the run checkpoint and keep
+their responsibilities separate:
+
+- `operatingMode` controls human availability and interaction cadence.
+- `modelRoutingProfile` controls model tier/effort selection only.
+- `assuranceProfile` controls verification, review, and promotion depth.
+- `releaseStage` controls the authority boundary and when re-planning is due.
+
+Also record the first usable journey, accepted defects, release blockers,
+known-issues destination, recovery path, and escalation triggers. Rapid is
+eligible only for named private users, reversible experiment/beta state, and a
+preserved prior authority. Do not start or continue rapid delivery if the work
+becomes public, irreversible, operational without recovery, or canonical;
+raise assurance, reopen architecture/planning, and obtain the required human
+authority first. A profile may never be lowered to bypass a failing gate.
 
 ## The Story Loop
 
@@ -90,7 +111,7 @@ Repeat until done:
    implementer to finish by opening a PR (or pushing its branch if it can't).
    Pick the lane by the **routing table** in
    [references/parallel-dispatch.md](references/parallel-dispatch.md) — the
-   story's Complexity rating × the repo's delivery profile decides model
+   story's Complexity rating × the repo's `modelRoutingProfile` decides model
    tier and effort. Resolve tiers to models proven available in this host's
    local profile; then run that lane's configured dispatch command:
 
@@ -104,13 +125,22 @@ Repeat until done:
 3. **Verify — never on trust.** When the implementer reports done, run the
    story's verification yourself *inside the story's worktree*: the plan's
    exact commands, affected tests, lint/build, and dev-browser evidence
-   for anything UI-facing (the full suite runs on main after merge, not
-   per-worktree — see step 5). Check the diff for scope violations — files
+   for anything UI-facing (the profile-required full suite runs on the
+   integration branch at its merge/slice boundary, not per-worktree — see
+   step 5). Check the diff for scope violations — files
    outside the story's scope, deleted tests, weakened assertions, and any
    change outside the worktree (there must be none; the coordinator checkout
    must still be clean on main). Gates failing → bounce straight back to the
    implementer with the failing output appended to the goal; don't spend a
    review on work that doesn't pass the machines.
+
+   Verification depth follows assurance without weakening the safety floor.
+   Standard and assured keep the full existing story and post-merge gates.
+   For a routine rapid story, run its exact focused commands plus affected
+   tests and applicable lint/type/build checks; at the first-usable slice
+   boundary run the full configured suite and one real user/browser journey.
+   Deleted tests, weakened assertions, falsified evidence, P0/P1 behaviour,
+   and any invariant-boundary failure always bounce in every profile.
 
    If the plan names a real-vendor gate, run it only through the approved,
    audited probe/runner and serialize it against that shared vendor tenant.
@@ -123,7 +153,13 @@ Repeat until done:
    a real-integration criterion; real-vendor evidence cannot replace the
    deterministic local gate.
 
-4. **Review — bounded, then done.** Once gates pass, ensure the story is a PR
+4. **Review when the contract requires it — bounded, then done.** Once gates
+   pass, apply the review decision before merge. Independent review is
+   mandatory for every standard and assured story, and in every profile when
+   Risk is `mandatory-review` because the change touches authentication,
+   authorisation, secrets/exposure, destructive or canonical state, money or
+   human/commercial gates, concurrency/idempotency/recovery/cross-tenant
+   behaviour, or an architecture/security boundary. Ensure that story is a PR
    and put it through the review protocol in
    [references/review-protocol.md](references/review-protocol.md): an
    independent reviewer — a **fresh agent session** with none of the
@@ -142,12 +178,21 @@ Repeat until done:
    unchanged code. Hard cap: initial review plus two delta reviews. Rework
    that survives the cap is decided by you: fix it yourself if trivial, or
    park the story with its rework bead open. Non-blockers never block — they
-   land as P3 beads or PR notes and the review is still a pass.
+   land as P2/P3 issues or PR notes and the review is still a pass.
+
+   A routine, reversible rapid story may use coordinator verification without
+   an independent packet. Record the `routine` classification, why no trigger
+   applies, commands/evidence checked, exact head, and any known issue links in
+   the story bead. Several small routine issues may be batched into one
+   iteration slice, but batching never hides a trigger or widens scope.
 
 5. **Accept or park.**
-   - **Accept:** merge the PR per the repo's process, run the **full suite on
-     main** in your own checkout — a failure there is P0: revert or fix
-     forward before any new dispatch. Then retire the story: drop its
+   - **Accept:** merge the PR per the repo's process. For standard and assured,
+     run the **full suite on main** in your own checkout after every merge, as
+     before. For rapid, run affected integration gates after each merge and
+     the full suite plus the named real user/browser journey at the first-
+     usable slice and release boundaries. A required post-merge gate failure
+     is P0: revert or fix forward before any new dispatch. Then retire the story: drop its
      resource lease (drop its database, free its port block),
      `git worktree remove .worktrees/<slug>`, delete the local branch. Close
      the story bead with evidence (commands run, results, evidence paths, PR
@@ -170,20 +215,41 @@ Repeat until done:
    the lesson changes the generic factory method rather than one vendor's
    behaviour.
 
-## The Promotion Gate — findings never ride to main
+   Under rapid, keep a visible known-issues set in the human-facing tracker.
+   P0/P1 findings and invariant-boundary failures cannot be deferred. A P2/P3
+   may cross the current reversible private release boundary only when its
+   issue records impact, reproduction, desired outcome, severity, release
+   milestone, and the shipped head/slice; link it from the bead and plan
+   ledger. No per-finding waiver is needed when the delivery contract already
+   accepts that severity/category. A new kind of defect requires an updated
+   contract or explicit operator decision.
 
-Story reviews split findings by severity; non-blockers become finding beads
-and never block a story's merge to the integration branch. That debt has a
-hard boundary: **it does not cross the promotion boundary unfixed.** A live
-factory trial exposed this failure: reviewer-caught findings remained open
-while the roll-up shipped, so a later review rediscovered known bugs.
+## Profile Promotion Gates
 
-- **Drain continuously.** A free lane with no ready story is a drain
+Story reviews split findings by severity. Under standard and assured,
+non-blockers become finding beads and never block a story's merge to the
+integration branch, but that debt has a hard boundary: **it does not cross the
+promotion boundary unfixed.** A live factory trial exposed this failure:
+reviewer-caught findings remained open while the roll-up shipped, so a later
+review rediscovered known bugs.
+
+Rapid uses a different, explicit release gate for a reversible private
+experiment/beta: block every P0/P1 and invariant-boundary failure; require the
+full configured suite and named real user/browser journey; require every
+accepted P2/P3 to be linked in the visible known-issues set and plan ledger;
+confirm the prior authority and reset/repair path still work; and pin the
+decision to the released head. Run the integrated independent review when any
+story or combined interaction has a mandatory-review trigger; otherwise record
+the coordinator's integrated risk check. Rapid must raise assurance and
+re-plan before public, irreversible, operational-without-recovery, or
+canonical promotion.
+
+- **Drain standard/assured findings continuously.** A free lane with no ready story is a drain
   opportunity: batch open finding beads into a bounded sweep story (same
   scope discipline, safety valve on money paths) and dispatch it through the
   normal loop — verify, review, merge. Don't let the debt pile up for a
   big-bang drain at the end.
-- **Gate the promotion PR.** Before pushing the PR that promotes the
+- **Gate the standard/assured promotion PR.** Before pushing the PR that promotes the
   integration branch to main — or before declaring the run done when main
   *is* the integration branch — every finding bead opened during the run must
   be **closed** (fixed by dispatched implementer agents through the
@@ -194,7 +260,7 @@ while the roll-up shipped, so a later review rediscovered known bugs.
 - **Disclose what remains.** The promotion PR body lists every waived bead
   with a one-line risk statement. An outside reviewer should be able to
   rediscover nothing the factory already knows.
-- **Review the union.** The promotion diff — everything since main diverged —
+- **Review the standard/assured union.** The promotion diff — everything since main diverged —
   gets one independent review at the same bar as story reviews
   ([references/review-protocol.md](references/review-protocol.md)). Merged
   stories interact in ways no per-story review saw: shared-file unions,
@@ -230,9 +296,9 @@ invariants:
   isn't cooling on usage limits) and **host capacity** (load, memory, disk
   thresholds). Scale by not starting work — never by killing running work.
 - **Stories route by complexity, not habit:** the plan's Complexity rating ×
-  the repo's `deliveryProfile` selects lane tier and effort (routing table
-  in the reference). The reviewer uses the highest review-capable configured
-  lane; no product/model name is assumed.
+  the repo's `modelRoutingProfile` selects lane tier and effort (routing table
+  in the reference). When independent review applies, the reviewer uses the
+  highest review-capable configured lane; no product/model name is assumed.
 - Subscriptions are shared with other hosts: a usage ledger
   (`.factory/usage.jsonl`) paces dispatches, but live limit signals are the
   truth. On a limit: mark the provider cooling, shift the queue to healthy
@@ -259,11 +325,15 @@ invariants:
   design docs — against main as it is *now* — is the normal rhythm, not a
   replan. Fold in the gap analysis while you're there: parked stories, open
   rework and finding beads, criteria no wave has covered yet.
-- **Done means evidence.** Finish only when every acceptance criterion in the
-  requirements doc maps to closed stories with verification evidence, every
-  finding bead from the run is closed or human-waived (the Promotion Gate),
-  the full suite is green on main, and the log records it. Elapsed time,
-  effort, and "the agent said so" are not completion.
+- **Done means evidence.** Finish only when every criterion required for the
+  current release stage in the requirements doc maps to closed stories with
+  verification evidence, every
+  finding is handled by the applicable Promotion Gate (closed/waived for
+  standard/assured; P2/P3 visibly issue-linked for eligible rapid), the full
+  suite is green at its required boundary, the named journey passes, and the
+  log records it. Later-stage/deferred criteria remain linked, not silently
+  treated as complete. Elapsed time, effort, and "the agent said so" are not
+  completion.
 - **Usage limits are weather, not failure.** Cooling providers, pauses, and
   window-boundary resumes are normal operation — log them, checkpoint, and
   let the resume ritual pick the run back up.
@@ -280,8 +350,11 @@ invariants:
 - Batch questions for the human; park the affected story and keep working
   everything else. Block entirely only when nothing is workable.
 - Hard stops requiring human confirmation regardless of autonomy mode:
-  destructive/irreversible operations, production deploys, publishing,
-  external-service configuration, credential handling.
+  destructive/irreversible or canonical operations, production deploys,
+  public release/publishing, external-service configuration, credential or
+  secret handling, and human/commercial/cutover decisions. Never delete tests,
+  weaken assertions, falsify evidence, or mutate/disable an existing authority
+  to make a reversible beta pass.
 - Blocked >30 minutes on one story: park it with a note and move on.
 - Respect the repo's operating mode (see hls-process-init): fully-autonomous
   VPS mode widens what you verify-and-proceed on; supervised workstation mode

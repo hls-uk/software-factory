@@ -1,11 +1,22 @@
 # Story Review Protocol
 
-Every story lands as a PR and gets an independent review before merge. The
-protocol is designed to terminate: severity discipline stops nitpicking,
+Every story subject to this protocol lands as a PR and gets an independent
+review before merge. The protocol is designed to terminate: severity discipline stops nitpicking,
 delta-only follow-ups stop relitigating, and a hard round cap stops loops.
 All review prompts and verdict checks use the deterministic builder/verifier
 in [review-packets.md](review-packets.md); this file defines the fixed human
 review rules that its versioned templates encode.
+
+## Applicability
+
+Use this protocol for every standard and assured story. Under rapid, use it
+for any story or integrated slice touching authentication/authorisation,
+secrets/exposure, destructive or canonical state, money or human/commercial
+gates, concurrency/idempotency/recovery/cross-tenant behaviour, or an explicit
+architecture/security boundary. A routine reversible rapid story may instead
+use the coordinator evidence contract in the main skill. Once this protocol
+is invoked, its independence, packet, severity, and round-cap protections do
+not change with assurance profile.
 
 ## Roles
 
@@ -130,11 +141,11 @@ Finding shape (one object per finding in the verdict JSON):
 
 ## Wiring the result into beads
 
-- **No blockers:** review passes. Non-blockers become P3 finding beads (or
-  PR notes if trivial); merge proceeds. Filing is deferral, not disposal:
-  every finding bead must be drained — fixed by dispatched sub-agents or
-  explicitly human-waived — before the run's work is promoted to main (the
-  Promotion Gate in the skill body).
+- **No blockers:** review passes. Classify non-blockers P2/P3. Under rapid,
+  each accepted finding becomes a visible human-facing issue linked from the
+  plan/bead and governed by the delivery contract. Under standard/assured it
+  becomes a finding bead (or PR note if truly trivial). Filing is deferral,
+  not disposal: apply the profile's Promotion Gate in the skill body.
 - **Blockers:** create ONE rework bead per round —
   `bd create "Rework: <story> round <n>" -p 1 -d "<blocker list + PR link>"`,
   `bd dep add <story-bead> <rework-bead>` — post the findings on the PR, and
@@ -176,13 +187,20 @@ found/fixed, and non-blocker beads created. Review effort is evidence too.
 
 ## The promotion review
 
-The PR that promotes the integration branch to main gets one more
-independent review — of the combined diff since main diverged, not a re-read
-of the already-reviewed stories. It exists because merged stories interact
-in ways no per-story review saw. The reviewer receives the combined diff,
-plan doc, and list of waived finding beads frozen by the promotion contract.
-Build a `promotion` packet from the actual main base and integration head and
-dispatch `prompt.txt` verbatim. Its fixed template checks:
+For standard/assured, the PR that promotes the integration branch to main gets
+one more independent review — of the combined diff since main diverged, not a
+re-read of the already-reviewed stories. It exists because merged stories
+interact in ways no per-story review saw. The reviewer receives the combined
+diff, plan doc, and list of waived finding beads frozen by the promotion
+contract. Build a `promotion` packet from the actual main base and integration
+head and dispatch `prompt.txt` verbatim.
+
+For rapid, run this promotion packet when any story or combined interaction
+has a mandatory-review trigger. Otherwise the coordinator records the
+integrated risk check, full-suite result, named journey, known-issues links,
+recovery confirmation, and exact released head.
+
+When the promotion packet runs, its fixed template checks:
 
 1. Cross-story interactions: shared-file unions, contract drift between
    stories, a surface one story added that another story's change gates.

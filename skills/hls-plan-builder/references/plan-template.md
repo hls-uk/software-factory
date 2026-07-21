@@ -6,6 +6,10 @@ id: PLAN-<slug>
 requirements: docs/requirements/<slug>.md
 architecture: docs/architecture/<slug>-architecture.md   # or: unchanged (ARCH-<slug>)
 status: draft | active | done
+operatingMode: supervised | autonomous
+modelRoutingProfile: quality | balanced | throughput
+assuranceProfile: rapid | standard | assured
+releaseStage: experiment | beta | operational | canonical
 updated: YYYY-MM-DD
 ---
 
@@ -16,9 +20,25 @@ updated: YYYY-MM-DD
 Two or three lines, refreshed at every checkpoint: wave in flight, stories
 merged, where to resume. The first thing a resuming agent reads.
 
+## Delivery Contract
+
+- **First usable target:** <active-time target plus one observable end-to-end
+  operator journey>
+- **Exposure / data criticality:** <current boundary>
+- **Prior authority and recovery:** <what remains authoritative; reset,
+  repair, or rollback>
+- **Accepted defects:** <P2/P3 categories and their issue destination>
+- **Release blockers:** <P0/P1 plus invariant or contract-specific blockers>
+- **Escalation triggers:** <conditions that require raised assurance and
+  re-planning before release>
+
+For `rapid`, wave 1 must complete the first usable target; a foundation-only
+wave is invalid unless no safe user journey exists or the operator approves a
+recorded reason. Standard and assured retain the repo's full protections.
+
 ## Design Decisions
 
-Deltas within the signed-off architecture — never reversals (a needed
+Deltas within the recorded/signed-off architecture — never reversals (a needed
 reversal reopens the architecture doc first).
 
 ### D1: <decision>
@@ -58,6 +78,8 @@ just-in-time when the queue drains, against the repo as it is then.
   "implemented + tested"
 - **Depends on:** Story 0
 - **Complexity:** high | standard | low — <one line: why this rating>
+- **Risk:** routine | mandatory-review — <consequence and exact trigger; this
+  is independent of Complexity>
 - **Scope:** <files/areas to touch; what must not break>
 - **Approach:** 2–5 bullets, enough to keep an implementer on the rails.
 - **Resources:** <db / ports / services verification needs — all from env,
@@ -74,12 +96,16 @@ The canonical progress view: progress is criteria ticked with evidence,
 not stories closed. The orchestrator updates Evidence as stories merge;
 the repo README links here.
 
-| Acceptance criterion | Stories | Evidence |
-|---|---|---|
-| AC 1 | 1 | <PR/test/log link, or blank until proven> |
-| AC 2 | 1, 3 | |
+| Acceptance criterion | Required milestone | Stories | Evidence / issue link |
+|---|---|---|---|
+| AC 1 | first-usable | 1 | <PR/test/log link, or blank until proven> |
+| AC 2 | operational | 1, 3 | |
+| AC 3 | deferred | — | <visible issue link and reason> |
 
 ## Test Strategy
 
 How the suite grows with the stories; what runs per-story vs. at the end.
+For rapid, name the focused story checks, full configured suite at the usable-
+slice boundary, and real user/browser journey. For standard and assured,
+retain all existing story, integration, review, and promotion gates.
 ```

@@ -15,36 +15,76 @@ Two rules shape everything:
 
 ```mermaid
 flowchart LR
-  R[Requirements] --> A[Architecture]
-  A --> S{Operator sign-off}
-  S -->|rework| A
-  S -->|signed| P[Plan next wave]
+  R[Requirements] --> C[Delivery contract]
+  C --> A[Proportional architecture]
+  A --> S{Recorded or signed}
+  S -->|rework or escalate| A
+  S -->|accepted path| P[Plan next usable wave]
   P --> O[Orchestrate]
   O --> V[Verify]
   V -->|red| O
-  V -->|green| RV[Fresh-context review]
+  V -->|green| T{Review required?}
+  T -->|risk/profile trigger| RV[Fresh-context review]
   RV -->|blockers| O
-  RV -->|pass| G{Promotion gate}
-  G --> L[Learn]
+  RV -->|pass| G{Release gate}
+  T -->|routine rapid| G
+  G --> U[Users and issues]
+  U --> L[Learn]
   L --> P
 ```
+
+## Delivery contract and assurance profiles
+
+Requirements record four separate controls before scope expands:
+
+| Field | Controls | Values |
+|---|---|---|
+| `operatingMode` | human availability and interaction cadence | `supervised`, `autonomous` |
+| `modelRoutingProfile` | model tier and effort selection | `quality`, `balanced`, `throughput` |
+| `assuranceProfile` | architecture, verification, review, and evidence depth | `rapid`, `standard`, `assured` |
+| `releaseStage` | current reversibility and promotion boundary | `experiment`, `beta`, `operational`, `canonical` |
+
+They are orthogonal: autonomy does not lower assurance, and throughput routing
+does not authorize known defects or promotion. The contract also records
+exposure, data criticality, the first usable journey, accepted defects,
+release blockers, recovery, and escalation triggers. Unknown consequence
+defaults to `standard`, never `rapid`.
+
+| | `rapid` | `standard` | `assured` |
+|---|---|---|---|
+| Intended boundary | named private users; reversible experiment/beta | durable internal product | public, regulated, high-impact, irreversible, or canonical |
+| First wave | one end-to-end usable journey | bounded verified vertical wave | risk-first complete-contract coverage |
+| Review | consequence-triggered | existing per-story and integrated protections | existing protections plus expanded failure/security evidence |
+| Full suite | usable-slice and release boundary | existing merge/wave gates | every merge and promotion |
+| Known defects | contract-accepted P2/P3 as visible linked issues | tracked under the release contract | fixed or operator-waived before promotion |
+
+Profiles may rise as exposure or authority changes. They may not be lowered to
+bypass a red gate. Every profile stops for secrets, destructive/irreversible
+or canonical mutation, unapproved public/deploy/external actions, required
+human/commercial decisions, test weakening, or false evidence.
 
 ### Requirements
 
 A structured interview turns intent into a confirmed document with numbered,
 testable acceptance criteria. Those criteria are the progress ledger; no later
-summary may weaken them.
+summary may weaken them. Confirmation also requires the delivery contract or
+an explicit `standard` default. Criteria state whether they are required for
+first use, operational use, canonical cutover, or a linked deferred issue.
 
 ### Architecture
 
-Before planning, expensive-to-reverse choices are researched as real options
-and assessed against explicit project constraints. There is no silent house
-stack. Requirements, existing systems, operator/host reality, security, cost,
-reversibility, and local verification determine the recommendation.
+Before planning, expensive-to-reverse choices are made explicit and assessed
+against project constraints. There is no silent house stack. Requirements,
+existing systems, operator/host reality, security, cost, reversibility, and
+local verification determine the recommendation.
 
-The architecture records diagrams, decisions and reasons, revisit triggers,
-and epic design-doc anchors. The operator signs it; an agent cannot approve
-its own proposal.
+Rapid work may use a concise `recorded` note for a private reversible beta:
+boundary, chosen shape, first vertical slice, recovery, risks, and escalation
+triggers. Standard and assured retain signed architecture, options, diagrams,
+revisit triggers, and epic design-doc anchors; an agent cannot approve its own
+proposal. Authentication/secrets, public exposure, destructive/canonical
+state, money/human gates, concurrency/recovery/cross-tenant behaviour, or an
+architecture/security boundary restore the signed path.
 
 Third-party integrations use one production adapter across deterministic
 simulators, real non-production observation, staging where applicable, and
@@ -60,12 +100,24 @@ one worktree, and carry scope, evidence inputs, resources, complexity, exact
 verification, and must-not-regress constraints. Epics anchor design; Beads
 computes their delivery state.
 
+Complexity routes models; consequence risk routes review. A rapid first wave
+must complete the named end-to-end operator journey with minimum UI/API/data
+wiring, preserve the prior authority, and carry reset/rollback. A foundation-
+only wave is invalid when a safe usable journey exists unless the operator
+records why it must wait. The criteria ledger retains later milestones and
+visible issue links so speed does not erase scope.
+
 ### Orchestrate and verify
 
 The coordinator keeps the queue moving and does not write product code. Each
 implementer receives one story in a coordinator-created worktree. The
 coordinator then re-runs the promised tests, lint/build, affected checks, and
 UI evidence. A red gate bounces with exact output before review consumes time.
+
+Standard and assured keep the existing story and post-merge gates. A routine
+rapid story may use focused and affected checks, but the full configured suite
+and one real user/browser journey run at the first-usable slice and release
+boundaries. Invariant failures and P0/P1 findings block every profile.
 
 Resource leases, host capacity, provider availability, and preflight bound
 parallelism. A second concurrent merge rebases and re-runs gates against the
@@ -76,6 +128,14 @@ combined tree.
 Independence means a fresh, read-only agent context that never receives the
 implementer conversation. It does not mean a second human, provider, account,
 model, or host.
+
+Standard and assured retain independent review for every story and the
+integrated result. Rapid may use coordinator verification for routine,
+reversible CRUD, copy, layout, or internal workflow changes. Independent
+review remains mandatory in every profile for authentication/authorisation,
+secrets/exposure, destructive or canonical state, money or human/commercial
+gates, concurrency/idempotency/recovery/cross-tenant behaviour, and explicit
+architecture/security boundaries.
 
 Before a story branch diverges, the plan-owned review inputs are frozen in a
 base-committed contract. The packet builder combines exact Git blobs, the
@@ -93,16 +153,39 @@ approve its own template.
 
 ### Promotion and learning
 
-Non-blockers may pass a story but may not ride through final promotion
-unresolved. Findings are fixed through the normal loop or explicitly waived
-by the operator and disclosed. The combined integration diff receives its own
-review because per-story reviews cannot see cross-story interactions.
+Under standard and assured, non-blockers may pass a story but may not ride
+through final promotion unresolved. Findings are fixed through the normal loop
+or explicitly waived by the operator and disclosed. The combined integration
+diff receives its own review because per-story reviews cannot see cross-story
+interactions.
+
+A rapid private release instead blocks P0/P1 and invariant failures, runs the
+full suite and named journey, proves reset/repair and preserved prior
+authority, and links every contract-accepted P2/P3 in a visible known-issues
+set. It needs integrated independent review when any combined risk trigger
+applies; otherwise the coordinator records the integrated risk check and exact
+released head. Rapid must re-plan at raised assurance before public,
+irreversible, operational-without-recovery, or canonical use.
 
 Every session records what changed, why, and the evidence. Stack-specific
 lessons grow the playbook; generic factory defects travel through feedback,
 sweep, release, and consumer update. A released fix is not learned by a
 consumer until its committed skills lock is updated and any local stopgap is
 reconciled.
+
+### Issue-driven iteration
+
+GitHub Issues own human-facing feedback for GitHub-hosted products: observed
+problem, reproduction, impact, desired outcome, severity, and release
+milestone. Beads owns selected multi-session execution and dependencies. The
+factory does not mirror the whole issue backlog into Beads.
+
+The iteration loop is: select → reproduce → classify consequence risk → bound
+the change → implement → proportionate verification → affected user-journey
+check → close or requeue. A small same-surface, same-risk batch is allowed; an
+architecture or promotion trigger returns through the main factory loop. The
+human-facing issue closes only when its outcome is verified on the intended
+release head; its linked Bead closes when bounded execution evidence is done.
 
 ## One operator, several hosts
 
@@ -147,7 +230,11 @@ removed or rebuilt.
 
 ## Completion
 
-A factory run is done only when every acceptance criterion maps to closed work
-with evidence, all findings are fixed or explicitly waived, review PASS matches
-the exact promoted head, the full integration suite is green, and the log and
-Beads state let a fresh session resume without this conversation.
+A factory run reaches its current release boundary only when every criterion
+required for that milestone maps to closed work with evidence; later criteria
+remain explicitly linked. Standard/assured findings are fixed or operator-
+waived and review PASS matches the promoted head. Eligible rapid P2/P3 defects
+are visible linked issues, all P0/P1 and invariant failures are closed, the
+full suite and named journey are green at the slice/release head, and recovery
+is still real. In every profile, the log and Beads state let a fresh session
+resume without this conversation.

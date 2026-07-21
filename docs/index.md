@@ -9,7 +9,7 @@ page add or rename.
 - [README](../README.md) — what this repo is and how to install the skills.
 - [AGENTS.md](../AGENTS.md) — the operating manual for agents working here.
 - [Factory Method](factory-method.md) — the single-operator, multi-host
-  evidence loop and the reasons behind its gates.
+  risk-calibrated evidence loop, delivery profiles, and invariant gates.
 - [BOOTSTRAP-BRIEF](BOOTSTRAP-BRIEF.md) — the founding spec: the full v1
   requirements this repo was bootstrapped against.
 
@@ -22,11 +22,30 @@ page add or rename.
 
 ## Requirements
 
+- [Laptop-Native Structured Reporting Agent Harness Trial](requirements/structured-reporting-laptop-agent-harness-trial.md)
+  — confirmed one-sprint PRD for a local Claude/Codex trial over fictional
+  XBRL/iXBRL, HTML, and PDF packs, with resumable orchestration and generated
+  results.
 - [Structured Reporting Evaluation Harness Validation](requirements/structured-reporting-evaluation-harness-validation.md)
-  — confirmed one-sprint PRD for a synthetic, research-safe XBRL/HTML/PDF
-  engineering-readiness artifact.
+  — superseded no-comparison validation PRD retained for audit; do not build.
 - [Structured Reporting Model Trial](requirements/structured-reporting-model-trial.md)
   — superseded study-shaped PRD retained for audit; do not build.
+
+## Architecture
+
+- [Laptop-Native Structured Reporting Agent Harness Trial](architecture/structured-reporting-laptop-agent-harness-trial-architecture.md)
+  — draft architecture for one local runner, two installed harness adapters,
+  durable receipts, bounded improvement, and generated reporting.
+
+## Design
+
+- [Risk-Calibrated Delivery](design/risk-calibrated-delivery.md)
+  — implemented rapid/standard/assured delivery contracts, invariant safety
+  boundaries, issue-driven iteration, and a pending Vita pilot.
+- [Structured Reporting Experiment Protocol](design/structured-reporting-experiment-protocol.md)
+  — binding corpus, matrix, scoring, improvement, and reporting invariants.
+- [Structured Reporting Laptop Runner](design/structured-reporting-laptop-runner.md)
+  — binding CLI, adapter, process, state, evidence, and security contracts.
 
 ## Decisions
 

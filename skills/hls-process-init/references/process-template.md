@@ -3,7 +3,10 @@
 ```markdown
 ---
 status: active
-mode: autonomous | supervised
+operatingMode: autonomous | supervised
+modelRoutingProfile: quality | balanced | throughput
+assuranceProfile: rapid | standard | assured
+releaseStage: experiment | beta | operational | canonical
 updated: YYYY-MM-DD
 ---
 
@@ -18,15 +21,41 @@ doing anything substantive.
 stops below.
 (or) `supervised` — human reachable; confirm outward-facing actions.
 
+## Delivery Contract
+
+- **Model routing:** `<quality | balanced | throughput>` selects configured
+  lanes; it does not grant autonomy or lower assurance.
+- **Assurance:** `<rapid | standard | assured>`; unknown defaults to
+  `standard`.
+- **Release stage:** `<experiment | beta | operational | canonical>`.
+- **Exposure / users:** <named private users, internal group, or public>.
+- **Data criticality:** <disposable, recoverable, authoritative, or canonical>.
+- **First usable target:** <one end-to-end user journey and observable signal>.
+- **Accepted defects:** <P2/P3 issues that may be linked and deferred>.
+- **Release blockers:** <P0/P1 defects and required evidence for this stage>.
+- **Recovery:** <reset, repair, or rollback path>.
+- **Escalation triggers:** <risk changes that restore deeper review or require
+  human authority>.
+
+`rapid` is limited to bounded, reversible experiment/beta delivery for named
+private users. It prioritizes the first usable vertical slice, focused checks,
+risk-triggered review, and linked P2/P3 follow-up. Escalate before public,
+irreversible, operational-without-recovery, or canonical use. Standard and
+assured retain their full configured protections.
+
 ## The Loop
 
-hls-requirements-interview → hls-architecture → hls-plan-builder → hls-factory-orchestrate → (per story)
-implement → verify → PR review (bounded, delta-only follow-ups) → evidence →
-close.
+hls-requirements-interview → hls-architecture → hls-plan-builder →
+hls-factory-orchestrate → (per story) implement → verify → applicable review
+(bounded, delta-only follow-ups) → evidence → close. Rapid cuts the first wave
+as an end-to-end usable journey; standard and assured follow the full gates.
 
 ## Verification Gates
 
-Run all of these locally before any story is accepted:
+Run all of these locally before any standard/assured story is accepted. Rapid
+may use story-scoped and affected checks while assembling the slice, but runs
+the full configured suite and its user-journey check before accepting the first
+usable slice. A risk trigger restores the full review and verification path.
 
 - Tests: `<command>` (story-scoped + affected tests in the worktree;
   full suite on main after each merge — a main failure is P0)
@@ -95,9 +124,12 @@ CLI, model, subscription, or capability change.
 
 ## Hard Stops (regardless of mode)
 
-Destructive or irreversible operations; production deploys; publishing;
-external-service configuration; anything requiring credentials not already
-provisioned. <Add repo-specific stops.>
+Destructive or irreversible operations; canonical-source mutation; production
+deploys; public release or publishing; external-service configuration;
+anything requiring credentials not already provisioned; bypassing human or
+commercial decisions; weakening or falsifying tests/evidence. These stops
+apply regardless of operating mode, model routing, assurance, or release
+stage. <Add repo-specific stops.>
 
 ## Skill Feedback
 

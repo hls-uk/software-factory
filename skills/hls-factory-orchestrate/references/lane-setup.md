@@ -6,8 +6,9 @@ repo declares portable requirements; each host records its actual tools and
 capabilities.
 
 - **Committed `.factory/agents.json` carries portable requirements:** tiers,
-  delivery profile, billing policy, independence rules, and capabilities a
-  lane may need. It contains no personal paths or credentials.
+  `operatingMode`, `modelRoutingProfile`, `assuranceProfile`, `releaseStage`,
+  billing policy, independence rules, and capabilities a lane may need. It
+  contains no personal paths or credentials.
 - **Gitignored `.factory/agents.local.json` carries one host's reality:**
   host id, absolute CLI paths, exact locally available model ids, dispatch
   commands, capabilities, and redacted preflight results.

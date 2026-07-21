@@ -29,10 +29,11 @@ Consumer repos record the installed source commit and skill list in
 
 | Skill | What it does |
 |---|---|
-| [hls-requirements-interview](skills/hls-requirements-interview/SKILL.md) | Interviews the operator into confirmed, testable requirements. |
-| [hls-architecture](skills/hls-architecture/SKILL.md) | Evaluates expensive-to-reverse choices against explicit project criteria and produces an operator-signed architecture. |
-| [hls-plan-builder](skills/hls-plan-builder/SKILL.md) | Turns requirements and architecture into criteria-traced, just-in-time story waves and a Beads graph. |
-| [hls-factory-orchestrate](skills/hls-factory-orchestrate/SKILL.md) | Runs the long-lived story loop: dispatch, verify, deterministic review, promotion, evidence, repeat. |
+| [hls-requirements-interview](skills/hls-requirements-interview/SKILL.md) | Interviews the operator into confirmed requirements and a risk-calibrated delivery contract. |
+| [hls-architecture](skills/hls-architecture/SKILL.md) | Records a concise rapid architecture or produces signed standard/assured architecture for expensive-to-reverse choices. |
+| [hls-plan-builder](skills/hls-plan-builder/SKILL.md) | Cuts a first usable rapid slice or protected standard/assured waves, traced to criteria and Beads. |
+| [hls-factory-orchestrate](skills/hls-factory-orchestrate/SKILL.md) | Dispatches, verifies, reviews, promotes, and routes issues according to assurance plus story risk. |
+| [hls-issue-iteration](skills/hls-issue-iteration/SKILL.md) | Delivers selected GitHub issues through reproduce, risk classification, proportionate verification, and user-journey closure. |
 | [hls-factory-status](skills/hls-factory-status/SKILL.md) | Produces a fixed-shape, read-only report across repos, hosts, lanes, gates, and queues. |
 | [hls-tech-playbook](skills/hls-tech-playbook/SKILL.md) | Reusable stack-specific failure diagnoses and proven workarounds. |
 
@@ -41,7 +42,7 @@ Consumer repos record the installed source commit and skill list in
 | Skill | What it does |
 |---|---|
 | [hls-repo-bootstrap](skills/hls-repo-bootstrap/SKILL.md) | Adds durable repo memory, entrypoints, logs, decisions, and learnings. |
-| [hls-process-init](skills/hls-process-init/SKILL.md) | Installs the factory process in a new repo, including gates and per-host configuration. |
+| [hls-process-init](skills/hls-process-init/SKILL.md) | Installs the factory process, delivery contract, gates, and per-host configuration in a new repo. |
 | [hls-process-revamp](skills/hls-process-revamp/SKILL.md) | Adopts the factory incrementally in an established repo. |
 | [hls-beads](skills/hls-beads/SKILL.md) | Embedded durable work tracking: queue, claims, dependencies, blockers, and evidence closes. |
 | [hls-dev-browser](skills/hls-dev-browser/SKILL.md) | Browser-driven UI verification with assertions and screenshot evidence. |
@@ -63,6 +64,14 @@ wave and restates every applicable MUST. Orchestration gives each story to an
 agent in an isolated worktree, re-runs its gates, and sends a mechanically
 bound packet to a fresh read-only reviewer session. Any commit invalidates the
 review until the exact new head is reviewed.
+
+At intake, the factory records `operatingMode`, `modelRoutingProfile`,
+`assuranceProfile`, and `releaseStage` separately. Rapid delivery prioritizes
+one reversible end-to-end journey for named private users, with risk-triggered
+review and visible linked P2/P3 issues. Standard and assured retain the full
+review and verification protections. Every profile stops before unapproved
+public, destructive, irreversible, canonical, credential, external-service,
+or human/commercial actions.
 
 One operator retains requirement sign-off, architecture sign-off, risk waiver,
 promotion, and external-action authority. The same operator, subscription,

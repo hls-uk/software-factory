@@ -86,6 +86,16 @@ routing table, defaults, usage-limit handling, and host thresholds:
 than one host, apply the shared-queue and failover rules in
 [host-lanes.md](host-lanes.md).
 
+The same config records four independent delivery controls:
+`operatingMode` (`supervised`/`autonomous`), `modelRoutingProfile`
+(`quality`/`balanced`/`throughput`), `assuranceProfile`
+(`rapid`/`standard`/`assured`), and `releaseStage`
+(`experiment`/`beta`/`operational`/`canonical`). Model routing selects lanes;
+it does not grant action authority, waive review, or promote a release. If an
+older config has `deliveryProfile`, migrate a recognized model-routing value
+to `modelRoutingProfile` and explicitly establish the other three fields;
+missing assurance defaults to `standard`.
+
 `dispatch` is the literal command the coordinator runs (goal/prompt text
 substituted). Any harness/CLI works if it can take a prompt and work a
 branch. Implementer goals come from the handoff template; reviewer prompts
@@ -100,8 +110,8 @@ Precedence, most specific wins:
 
 1. `.factory/agents.json` in the host repo — the authoritative assignment
    (hls-process-init scaffolds it).
-2. `docs/process.md` — the human-readable record of the same choices plus
-   operating mode; keep the two consistent.
+2. `docs/process.md` — the human-readable delivery contract and record of the
+   same four choices; keep the two consistent.
 3. The skill defaults — what this skill assumes when neither exists:
    coordinator = the strongest model in the session you launched from;
    implementers = the locally available lane or lanes that pass preflight;
