@@ -1,5 +1,21 @@
 # Log
 
+## [2026-07-23 16:56 BST] sync | v0.9.0 commit and push authorization
+- Driven by: Adam (`commit and push`)
+- Executed by: Codex
+- What changed: committed the complete reviewed fold-back as
+  `d366d09e05ac2866975b43609a1bff5a592a9560`
+  (`feat: fold back non-SD i5 factory upgrades`) and pushed it to
+  `origin/main`. Updated closed Beads epic `software-factory-gbp` with the
+  exact implementation commit; this log/ledger update is the separate
+  closeout change.
+- Evidence: fetched `origin/main` first and proved `0/0` divergence at
+  `cfd59a5`; reran the validator (17 skills, 0 errors/warnings), contract
+  (9/9), metrics (8/8), context-budget, review-packet (5/5), toolchain (5/5),
+  fold-back (6/6), and `git diff --check` gates; inspected all 43 staged paths
+  before committing. The non-force Git push advanced `origin/main` from
+  `cfd59a5` to `d366d09`.
+
 ## [2026-07-23 16:00 BST] release | v0.9.0 non-SD i5 fold-back
 - Driven by: Adam (activated the pinned Goalcraft objective to port every
   selected i5 upgrade except SD and make the same subset repeatable)
