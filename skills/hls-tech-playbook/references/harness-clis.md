@@ -37,6 +37,54 @@
   to an API key — wait for the window or shift same-tier lanes (see the
   Billing Guardrail in the orchestrate skill's parallel-dispatch reference).
 
+## Optional variant: GLM-5.2 through the Claude Code harness
+
+This is an explicitly optional host-local variant carried forward from the
+pinned i5 baseline; it is not an HLS default or a claim about current model
+quality. Z.ai's GLM Coding Plan used an Anthropic-compatible endpoint with the
+`claude` CLI, so no new harness binary was required:
+
+```sh
+env -u ANTHROPIC_API_KEY \
+  ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic \
+  ANTHROPIC_AUTH_TOKEN="$Z_AI_API_KEY" \
+  API_TIMEOUT_MS=3000000 \
+  claude -p --model glm-5.2 --strict-mcp-config --setting-sources project \
+  "$(cat goal.txt)"
+```
+
+- **Keep it disabled until auth type is proved.** At the i5 baseline, a
+  `Z_AI_API_KEY` issued for the flat-rate Coding Plan was subscription auth
+  despite its name. Before classifying the lane as subscription-billed, an
+  operator-run preflight must prove that the token is accepted by the coding
+  plan Anthropic-compatible route and rejected by the per-token route. If the
+  per-token route accepts it, declare `"billing": "api"` and require explicit
+  authority, or leave the lane disabled.
+- **Keep the override per dispatch.** Never write `ANTHROPIC_BASE_URL`,
+  `ANTHROPIC_AUTH_TOKEN`, or the secret value to committed config or user-wide
+  Claude settings. Store only the secret variable name in the gitignored host
+  profile; the value remains in the operator's existing secret mechanism.
+- **Pin and label it.** Use `--model glm-5.2`, tier it as `strong` until local
+  evaluation proves otherwise, and label the lane `optional-glm52-claude`.
+  Provider mappings and behavior can drift, so rerun the cheap model/auth
+  preflight after any plan, endpoint, CLI, or model change.
+- **Preserve lean context.** Retain
+  `--strict-mcp-config --setting-sources project`; add any needed MCP config
+  explicitly at repo or lane scope.
+
+Do not run either auth probe merely because this reference is installed.
+Network use, credential access, lane enablement, and any paid/API billing
+remain operator approval gates.
+
+## Lean Claude-harness context
+
+Every Claude Code factory implementer and reviewer command carries
+`--strict-mcp-config --setting-sources project`. This retains project
+instructions/settings and built-in tools while excluding user-level
+MCP/plugin injection. A lane that needs an MCP server declares it at repo
+level or adds an explicit `--mcp-config`; never drop the lean flags silently.
+Run the hls-factory-orchestrate context checker after lane or settings changes.
+
 ## Two versions of the same CLI on one machine
 
 - **Symptom:** a flag works interactively but a supervisor/cron launch fails

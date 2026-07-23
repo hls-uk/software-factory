@@ -66,6 +66,10 @@ In order, each verified before the next:
    (AGENTS.md/CLAUDE.md). This is the repo's memory; everything else logs
    into it.
 2. **Work tracking** — run the hls-beads skill's setup (`bd init`, embedded).
+   Copy its `references/toolchain.json` to `.factory/toolchain.json` and run
+   its local `scripts/check-toolchain.py` before tracker writes. This pins the
+   already-installed embedded writer and schema; it never installs a binary,
+   contacts a tracker server, or grants sync/push authority.
 3. **Skills** — install the factory skills where agents discover them:
    `npx skills add <owner>/<skills-repo>` (all agents), and commit the
    install choice to the repo docs so future sessions repeat it. Record the
@@ -78,8 +82,13 @@ In order, each verified before the next:
    and `.factory/agents.json` assigning the coordinator, implementer lanes
    (with tiers), reviewer, `operatingMode`, `modelRoutingProfile`,
    `assuranceProfile`, `releaseStage`, and the billing policy
-   (format, routing table, and defaults: the hls-factory-orchestrate skill's
-   `references/running-the-factory.md` and `references/parallel-dispatch.md`).
+   (format and safe defaults:
+   [references/delivery-contract.md](references/delivery-contract.md); routing
+   comes from hls-factory-orchestrate). Under `rapid`, either declare a
+   `spotReviewRate` from 3 through 10 or accept the safe full-review default.
+   Run the orchestrator's executable delivery-contract check before the first
+   dispatch and its `scripts/context_baseline.py --check` after changing
+   factory skills, references, or lane configuration.
    The committed file states **portable factory requirements** — tiers,
    profiles, independence, billing rules, and required capabilities — never
    an assumption that every host has every CLI or subscription. Gitignore
@@ -122,6 +131,9 @@ In order, each verified before the next:
    resolve values server-side, and keep all secret values out of repo config.
 6. **Evidence convention** — create `evidence/` with a one-line README:
    dated subdirectories per story, screenshots and verification write-ups.
+   The orchestrator also creates `.factory/metrics.jsonl` on first dispatch:
+   local append-only events and offline JSON rollups only. Do not require a
+   metrics server or dashboard.
 7. **Self-documenting README** — the top-level README carries a short
    "Where things are" section from which a human reaches, in one or two
    clicks, at any point in the project: **(a) the architecture**

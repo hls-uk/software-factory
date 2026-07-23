@@ -3,6 +3,38 @@
 Newest first. One line per skill change, linking the feedback issue where one
 exists.
 
+## 0.9.0 — 2026-07-23
+
+- hls-requirements-interview: records rapid `spotReviewRate` and makes
+  deterministic sampled review part of the confirmed delivery contract.
+- hls-plan-builder: treats planned Risk as an initial classification and
+  requires the implemented diff to be rechecked against mandatory-review
+  triggers.
+- hls-factory-orchestrate: adds the executable fail-safe delivery-contract
+  resolver, deterministic rapid 1-in-N sampling plus diff-risk escalation,
+  offline content-addressed metrics/JSON rollups, context P0–P4 (lean
+  Claude-harness flags, host hook hygiene, hot/cold references, verbatim
+  base-committed story extracts, budget gate), and an optional disabled
+  GLM-5.2 Claude-harness variant.
+- hls-beads: adds an embedded-only exact writer/schema manifest, fail-closed
+  local checker, offline qualification policy, and one-operator/
+  one-clone-at-a-time migration boundary with no shared server or installer.
+- hls-process-init: scaffolds the executable contract, rapid sampling,
+  local/offline metrics, context gate, and embedded toolchain check for new
+  consumers.
+- hls-tech-playbook: documents the optional labelled GLM-5.2 Claude-harness
+  command, per-dispatch scoping, lean context flags, and mandatory
+  auth/billing proof without enabling or probing a lane.
+- **New skill: hls-i5-foldback** — pins
+  `incept5/i5-software-factory@1d202c66f5fbc18add19531dd3f7f9db30744804`,
+  reconstructs every later commit-path delta, requires exact
+  `port`/`adapt`/`present`/`reject` coverage, and limits uptake to the
+  single-operator CE/RH/LM/TC/GLM subset.
+- docs/validation: updates the Factory Method, catalog, operating manual,
+  fold-back decision record, release gates, and session evidence. SD, shared
+  Dolt/Tailscale/AWS/RBAC/team onboarding/admin/central-dashboard/
+  control-plane coordination, and incomplete auto-tune remain excluded.
+
 ## 0.8.0 — 2026-07-21
 
 - hls-requirements-interview: adds the delivery interview/contract, separates `operatingMode`, `modelRoutingProfile`, `assuranceProfile`, and `releaseStage`, defaults unknown assurance to standard, and milestones criteria by first-use/operational/canonical/deferred.

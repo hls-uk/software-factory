@@ -2,13 +2,22 @@
 
 Compose the implementing agent's `/goal` from the plan's story entry. Keep it
 under ~1,600 characters — it is a launcher, not the plan. The story detail
-stays in the plan doc; the goal points at it.
+lives in the handoff extract; the goal points at it.
+
+At the same freeze moment that commits the review contract, write
+`.factory/reviews/<review-id>.story.md` into the integration base. Copy the
+plan's story entry, covered acceptance criteria, and verification commands
+**verbatim** (no paraphrase or summary), followed by the named-spec list and
+the full plan path. The story branch inherits a small auditable specification.
+The full plan remains available for surrounding context; binding spec docs
+are always named whole, never extracted.
 
 ```text
-/goal Complete Story <N> (<name>) from docs/plans/<slug>-plan.md — read that
-story entry first; it is the spec. Also read <every spec doc the story entry
-lists as evidence inputs — module deep-dives, contract docs>: their contracts
-and security requirements bind this story.
+/goal Complete Story <N> (<name>) — read
+.factory/reviews/<review-id>.story.md first; it is the verbatim spec extract
+(full plan: docs/plans/<slug>-plan.md). Also read <every spec doc the story
+entry lists as evidence inputs — module deep-dives, contract docs>: their
+contracts and security requirements bind this story.
 
 Context: you are in worktree .worktrees/<slug> on branch story/<slug> —
 treat this directory as the repo root and never write outside it. Covers
@@ -64,6 +73,9 @@ goal stands.
   a spec the reviewer never saw won't be enforced. (One factory trial shipped a
   token-less execute endpoint because the goal omitted the pricing deep-dive
   that mandated token binding.)
+- The handoff extract is an implementer context aid, not a review packet input.
+  The reviewer still receives the whole frozen story, criteria, and named
+  specification files.
 - Never include secrets in goal text; name the env var or config path instead.
 - The verify section quotes commands that already run in this repo — an
   implementer should never have to invent its own definition of done.

@@ -55,6 +55,7 @@ Consumer repos record the installed source commit and skill list in
 | [hls-skill-feedback](skills/hls-skill-feedback/SKILL.md) | Files structured field feedback and registers local stopgaps. |
 | [hls-skill-sweep](skills/hls-skill-sweep/SKILL.md) | Triages feedback, fixes skills, validates, and releases. |
 | [hls-skill-update](skills/hls-skill-update/SKILL.md) | Checks the committed install record, reads the release delta, reinstalls, and reconciles stopgaps. |
+| [hls-i5-foldback](skills/hls-i5-foldback/SKILL.md) | Exhaustively audits later i5 commit-path changes, records port/adapt/present/reject, then folds back only the HLS CE/RH/LM/TC/GLM subset. |
 
 ## How it fits together
 
@@ -93,7 +94,12 @@ security, cost, reversibility, and verification evidence.
 
 ```sh
 node scripts/validate-skills.mjs
+python3 skills/hls-factory-orchestrate/scripts/test_delivery_contract.py -v
+python3 skills/hls-factory-orchestrate/scripts/test_metrics_ledger.py -v
+python3 scripts/context-baseline.py --check
 python3 skills/hls-factory-orchestrate/scripts/test_review_packet.py -v
+python3 skills/hls-beads/scripts/test_check_toolchain.py -v
+python3 skills/hls-i5-foldback/scripts/test_foldback_audit.py -v
 bd ready
 ```
 

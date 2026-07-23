@@ -8,6 +8,7 @@ mode: greenfield | existing
 operatingMode: supervised | autonomous
 modelRoutingProfile: quality | balanced | throughput
 assuranceProfile: rapid | standard | assured
+spotReviewRate: 3-10 | full-review
 releaseStage: experiment | beta | operational | canonical
 updated: YYYY-MM-DD
 owner: <who confirmed these requirements>
@@ -31,6 +32,7 @@ Who uses this, in what environment. Existing systems it must fit into.
 
 ## Delivery Contract
 
+- **Routine rapid review:** <every Nth story, N=3–10; or full review>
 - **Exposure:** <named private users | internal group | public>
 - **Data criticality:** <disposable | recoverable | authoritative | canonical>
 - **Authority and recovery:** <what the agent may change; reset, repair, or

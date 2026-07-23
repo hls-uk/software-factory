@@ -35,7 +35,9 @@ responsibly assume.
    Also record exposure, data criticality, the first usable target, accepted
    defects, release blockers, and escalation triggers. An unknown or
    unconfirmed `assuranceProfile` defaults to `standard`; never infer `rapid`
-   from urgency alone.
+   from urgency alone. If `rapid` is confirmed, ask whether routine stories
+   should use deterministic spot review (1 in N, N from 3 through 10);
+   no explicit valid rate means full independent review.
 
 4. **Interview in small batches.** Ask at most 3–4 questions per round, most
    load-bearing first. For every question offer a sensible default so the user

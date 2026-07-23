@@ -1,5 +1,83 @@
 # Log
 
+## [2026-07-23 16:00 BST] release | v0.9.0 non-SD i5 fold-back
+- Driven by: Adam (activated the pinned Goalcraft objective to port every
+  selected i5 upgrade except SD and make the same subset repeatable)
+- Executed by: Codex
+- What changed: folded CE/RH/LM/TC and the optional labelled GLM variant from
+  `incept5/i5-software-factory@1d202c66f5fbc18add19531dd3f7f9db30744804`
+  onto HLS base `cfd59a564e60fe3ed613fef26164daf07c6cdfbe`.
+  The factory now has an executable four-field contract, actual-diff risk
+  escalation, deterministic rapid sampling, content-addressed local metrics
+  and offline JSON rollups, context P0–P4, an exact embedded Beads
+  writer/schema check, and a disabled GLM-5.2 Claude-harness variant. Added
+  installable `hls-i5-foldback`, whose checker reconstructs every later i5
+  commit-path row before accepting `port`/`adapt`/`present`/`reject`.
+- Decisions: HLS remains one human across laptop/VPS capacity; host identity
+  never becomes ownership or decision authority. SD, shared Dolt server,
+  Tailscale, AWS, RBAC, team onboarding/admin, central dashboard/control-plane
+  coordination, and incomplete auto-tune are rejected. Metrics stay offline,
+  the toolchain checker never installs/downloads/connects, and GLM remains
+  disabled until a separately authorized local credential/billing/model probe.
+- Evidence: Beads epic `software-factory-gbp` and children `.1`–`.5` closed
+  with tranche evidence. Final gates: skill validator 17/17 with 0 errors and
+  0 warnings; delivery-contract 9/9; metrics 8/8; review-packet 5/5; embedded
+  toolchain 5/5 plus actual `bd 1.1.0`/schema 1; fold-back audit 6/6 plus a
+  pinned zero-delta reconstruction; context budgets green at 5,914 estimated
+  tokens for orchestrator SKILL.md, 8,296 hot working set, and 20,494 bundle.
+  The separate offline proof appended five events and derived 2 gate runs/1
+  failure/1 review/1 non-blocker/merged/30 seconds. An isolated local
+  `/opt/homebrew/bin/skills` install was byte-identical, discoverable, valid,
+  and passed the installed audit suite. Exclusion scans, trailing-whitespace
+  scan, `git diff --check`, and dependency-cycle check were clean. No live GLM
+  probe, credentials, external service, reset/clean/overwrite, commit, or push
+  occurred.
+
+## [2026-07-23 15:27 BST] planning | Non-SD fold-back Goalcraft launcher
+- Driven by: Adam (selected every audited i5 upgrade except SD and requested
+  a reusable skill for future selective fold-backs)
+- Executed by: Codex
+- What changed: created Bead `software-factory-lwd` and drafted a compact
+  activation-ready goal for CE/RH/LM/TC/GLM plus a new self-contained
+  `hls-i5-foldback` skill. The goal pins i5 `1d202c6` and HLS `cfd59a5`,
+  requires future per-delta `port`/`adapt`/`present`/`reject` decisions, and
+  makes the one-human/many-host distinction an implementation invariant.
+- Decisions: SD includes the shared Dolt/Tailscale/AWS/RBAC/onboarding/admin/
+  central-dashboard/control-plane track and stays excluded. Incomplete i5
+  auto-tune AC8-AC10 is not treated as a completed upgrade. GLM-5.2 remains
+  an optional labelled harness variant, never an HLS default or credential
+  requirement. The goal preserves the current worktree and requires explicit
+  approval before commit, push, or external change.
+- Evidence: Goalcraft's normal draft measured 1,688 objective characters and
+  exceeded its strict 1,600 target, so the required emergency compact shape
+  was used; the final exact launcher passed at 1,453 characters against the
+  3,999 hard limit. The goal was drafted and recorded, not activated.
+
+## [2026-07-23 15:06 BST] planning | Selective post-v0.8 i5 upgrade audit
+- Driven by: Adam (asked to inspect recent updates in
+  `../../incept5/i5-software-factory` and choose upgrades before any port)
+- Executed by: Codex
+- What changed: audited the complete i5 range after the last HLS fold-back
+  baseline (`fe52b93..1d202c6`) against HLS `cfd59a5`; recorded the work in
+  Bead `software-factory-72p`; and classified the delta into independently
+  selectable capabilities. No skill, runtime, tracker-authority, host,
+  credential, remote, or external-service change was made.
+- Decisions: the HLS v0.8 four-field delivery contract, story Risk
+  classification, and assurance/risk routing are already present. The
+  selectable incremental upgrades are: context-efficiency P0-P4; executable
+  contract and review-routing hardening; local append-only metrics and
+  rollups; multi-host toolchain policy; an optional GLM-5.2 Claude-harness
+  lane; and, only as an explicit architecture programme, the shared
+  Dolt/Tailscale control plane plus central dashboard. Auto-tune remains an
+  i5 design/open implementation track, not a completed port candidate.
+- Evidence: live `git ls-remote` matched both inspected heads
+  (`hls-uk/software-factory@cfd59a5`,
+  `Incept5/i5-software-factory@1d202c6`); i5 changelog `0.13.0–0.26.0`,
+  `docs/plans/factory-delta-uptake-plan.md`, context-efficiency and GLM lane
+  verification, and the metrics/dashboard acceptance ledger were inspected.
+  The i5 context probe recorded a lane reduction from 44,431 to 23,636 input
+  tokens; its auto-tune AC8-AC10 remain open.
+
 ## [2026-07-21 22:04 BST] release | v0.8.0 risk-calibrated delivery implementation
 - Driven by: Adam (approved `DESIGN-risk-calibrated-delivery` on Bead
   `software-factory-aly`, then activated the repo-only implementation goal)

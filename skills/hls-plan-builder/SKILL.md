@@ -71,7 +71,9 @@ proves itself done.
      human/commercial gates, concurrency/idempotency/recovery/cross-tenant
      behaviour, and architecture/security boundaries are always
      `mandatory-review` in every assurance profile. Complexity routes models;
-     risk routes assurance. Never use one as the other.
+     risk routes assurance. Never use one as the other. This is an initial
+     route only: the orchestrator re-checks the implemented diff and escalates
+     any trigger surface regardless of the story label.
    - Maps to acceptance criteria by number. Every criterion is covered by at
      least one story; a story with no criterion is scope creep — cut it or
      take it back to requirements.

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "integrationBranch": "main",
+  "operatingMode": "supervised",
+  "modelRoutingProfile": "balanced",
+  "assuranceProfile": "standard",
+  "releaseStage": "operational",
+  "billingPolicy": "subscriptions-only",
+  "operatorModel": "single-operator-multi-host"
+}

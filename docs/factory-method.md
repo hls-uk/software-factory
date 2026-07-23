@@ -50,6 +50,12 @@ exposure, data criticality, the first usable journey, accepted defects,
 release blockers, recovery, and escalation triggers. Unknown consequence
 defaults to `standard`, never `rapid`.
 
+The committed declaration is executable: the orchestrator's resolver validates
+the four fields and owns safe defaults. Prose and coordinators do not
+reimplement fallback rules. A rapid contract may declare `spotReviewRate` as
+an integer from 3–10; absent, invalid, or out-of-range values mean full
+independent review.
+
 | | `rapid` | `standard` | `assured` |
 |---|---|---|---|
 | Intended boundary | named private users; reversible experiment/beta | durable internal product | public, regulated, high-impact, irreversible, or canonical |
@@ -114,6 +120,12 @@ implementer receives one story in a coordinator-created worktree. The
 coordinator then re-runs the promised tests, lint/build, affected checks, and
 UI evidence. A red gate bounces with exact output before review consumes time.
 
+At review-contract freeze time, the coordinator also base-commits a verbatim
+story extract: story entry, covered criteria, exact verification, named specs,
+and full-plan pointer. It gives the implementer compact context without
+changing the deterministic review packet, which still binds the whole named
+source documents.
+
 Standard and assured keep the existing story and post-merge gates. A routine
 rapid story may use focused and affected checks, but the full configured suite
 and one real user/browser journey run at the first-usable slice and release
@@ -136,6 +148,12 @@ review remains mandatory in every profile for authentication/authorisation,
 secrets/exposure, destructive or canonical state, money or human/commercial
 gates, concurrency/idempotency/recovery/cross-tenant behaviour, and explicit
 architecture/security boundaries.
+
+For eligible routine rapid work, sampling is deterministic in dispatch order:
+every Nth story receives the full independent review. Missing/invalid N means
+every story is reviewed. Before applying that route, the coordinator inspects
+the actual diff against the mandatory trigger list; a touched trigger
+escalates regardless of the planned Risk label.
 
 Before a story branch diverges, the plan-owned review inputs are frozen in a
 base-committed contract. The packet builder combines exact Git blobs, the
@@ -173,6 +191,11 @@ sweep, release, and consumer update. A released fix is not learned by a
 consumer until its committed skills lock is updated and any local stopgap is
 reconciled.
 
+Execution events append to a content-addressed local JSONL ledger. Capture
+failure never blocks delivery; integrity checks and per-story rollups run
+offline and emit JSON. Metrics require no database, upload, central dashboard,
+or automatic policy tuning.
+
 ### Issue-driven iteration
 
 GitHub Issues own human-facing feedback for GitHub-hosted products: observed
@@ -202,6 +225,18 @@ Beads queue, while one active coordinator lease prevents split-brain claims
 and merges. Failover reconstructs work from Beads, branches, PRs, logs, and
 plans—not copied conversations or untracked directories.
 
+Beads itself remains embedded. A committed toolchain declaration pins the
+local writer version and storage schema exactly; the checker only inspects the
+already-installed binary. Candidate qualification uses disposable local state,
+and one operator-selected clone performs any authorized migration while other
+hosts stop writing. There is no shared tracker server or team administrator.
+
+Claude Code lanes use project-only settings/MCP configuration by default.
+Per-host hook hygiene and a deterministic context gate keep the orchestrator
+hot working set bounded. An optional GLM-5.2-through-Claude variant may exist
+only as a disabled labelled host lane until local auth, billing, model, and
+context probes pass.
+
 The fixed-shape status report answers: which coordinator lease is active,
 which hosts and lanes are healthy or silent, what moved, what is blocked, what
 landed, and what requires the operator. Status observes and never changes
@@ -227,6 +262,21 @@ active plan/criteria coverage, and process in one or two clicks. Markdown is
 the source of truth. Documents that genuinely leave the repo may be rendered
 as published PDFs, with the regeneration command recorded and stale artifacts
 removed or rebuilt.
+
+## Selective upstream learning
+
+HLS may fold proven behavior back from the larger i5 team factory, but never
+by copying the fork wholesale. The `hls-i5-foldback` workflow pins an exact i5
+baseline, reconstructs one audit row for every later commit-path change, and
+requires `port`, `adapt`, `present`, or `reject` plus evidence before any
+implementation. Only context efficiency, rapid hardening, local metrics,
+embedded toolchain safety, and the optional labelled GLM harness variant are
+eligible.
+
+Team ownership/onboarding/admin, shared Dolt services, Tailscale/AWS/RBAC,
+central dashboards, control-plane coordination, SD, and incomplete auto-tune
+are rejected. Any eligible behavior is translated back to one operator across
+host-capacity/failure domains.
 
 ## Completion
 

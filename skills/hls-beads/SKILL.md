@@ -23,6 +23,19 @@ remote, `bd init` auto-configures a matching Dolt remote named `origin`.
 
 Commit `.beads/` config per the repo's convention; never hand-edit files in it.
 
+Copy this skill's `references/toolchain.json` to
+`.factory/toolchain.json`, then verify the already-installed local client
+before the first tracker write:
+
+```sh
+python3 <skill-dir>/scripts/check-toolchain.py \
+  --manifest .factory/toolchain.json --json
+```
+
+The contract pins the embedded writer version and schema exactly. It does not
+install software, contact a server, or grant sync authority; see
+[references/version-policy.md](references/version-policy.md).
+
 **Repo copied from a template?** A copied `.beads/` can carry config without a
 working database: `bd create` fails with *database not initialized* and
 `bd init` may refuse, claiming remote Dolt history that
@@ -34,6 +47,8 @@ restore `sync.remote`.
 
 ## Core Rules
 
+- Run the toolchain check at session start and after changing host or `bd`
+  binary. A mismatch stops tracker writes until the operator resolves it.
 - Create issues only when they have evidence, impact, a concrete next step, and
   a done condition. No speculative filler issues.
 - Use markdown docs for intent (requirements, plans, decisions); use beads for
@@ -78,6 +93,8 @@ share a backlog:
   command; wire pull into the repo's session-start ritual (hook or checklist).
 
 Never leave issue state local-only without saying so in your session summary.
+All hosts remain embedded clones operated by one person; no shared tracker
+server or team administration layer is introduced.
 
 ## Session Rituals
 

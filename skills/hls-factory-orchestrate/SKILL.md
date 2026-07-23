@@ -33,7 +33,9 @@ branch it is *plus* main itself.
 - A confirmed requirements doc (`docs/requirements/<slug>.md`) — else run
   hls-requirements-interview. It must record separate `operatingMode`,
   `modelRoutingProfile`, `assuranceProfile`, and `releaseStage`; missing
-  assurance defaults to `standard`, never `rapid`.
+  assurance defaults to `standard`, never `rapid`. Run this skill's
+  `scripts/delivery_contract.py check --repo <repo>` before dispatch so an
+  invalid declaration is surfaced rather than silently read by eye.
 - An architecture doc (`docs/architecture/<slug>-architecture.md`) with status
   `signed-off`, or `recorded` only for an eligible rapid experiment/beta; a
   plan may instead record `architecture: unchanged`. The sign-off is reserved
@@ -47,20 +49,16 @@ branch it is *plus* main itself.
   same-adapter simulator gate, the shared real non-production integration
   gate, and the approved credential/probe mechanism. Missing access leaves
   the real gate red; it never weakens or removes the local gate.
-- Repo guards active: if the repo declares git hooks (a `.githooks/` dir, a
-  `core.hooksPath` setup step in its docs or dev scripts), activate them in
-  the coordinator checkout before the first commit — worktrees share the
-  repo's git config, so one activation covers every lane, but commits made
-  *on a lane's behalf* run under the coordinator's config, so the coordinator
-  is the one place activation cannot be skipped. A guard that exists only as
-  an opt-in local hook (derived-artifact regeneration, contract sync) is an
-  escape waiting to happen: honor it during the run, and file feedback
-  (hls-skill-feedback) that it belongs in the repo's verify gate.
+- Repo guards active: run the documented `core.hooksPath`/setup step before
+  the first commit; worktrees share that config. Honour opt-in local guards
+  and file hls-skill-feedback when a required guard belongs in CI/verification.
 
 ## Resolve the Delivery Contract
 
-Before dispatch, copy the plan's four fields into the run checkpoint and keep
-their responsibilities separate:
+Before dispatch, run this skill's `scripts/delivery_contract.py show --repo
+<repo>` and copy the resolved result into the run checkpoint. The executable
+resolver owns safe defaults and the legacy `deliveryProfile` read alias; do not
+reimplement those rules from prose. Keep the four responsibilities separate:
 
 - `operatingMode` controls human availability and interaction cadence.
 - `modelRoutingProfile` controls model tier/effort selection only.
@@ -95,7 +93,13 @@ Repeat until done:
    [references/review-packets.md](references/review-packets.md): copy the
    story, criteria, every named spec, and predetermined verification-evidence
    paths from the plan. This is the last point where input paths are chosen;
-   prompt assembly later has no file-list or free-prose inputs.
+   prompt assembly later has no file-list or free-prose inputs. In the same
+   freeze commit, write `.factory/reviews/<review-id>.story.md`: copy the
+   plan's story entry, covered acceptance criteria, and exact verification
+   commands **verbatim**, followed by the named-spec list and full plan path.
+   The branch inherits this compact implementer handoff; it is auditable but
+   is not an input to the deterministic review packet
+   ([references/goal-handoff-template.md](references/goal-handoff-template.md)).
 
    ```sh
    git -C <repo> pull --ff-only
@@ -105,10 +109,11 @@ Repeat until done:
 
    Compose a compact `/goal` from
    [references/goal-handoff-template.md](references/goal-handoff-template.md):
-   destination, context pointer to the plan story, scope, preserve, verify,
-   done/stop — target ≤1,600 characters, detail stays in the plan doc. The
-   goal names the worktree as the working directory and instructs the
-   implementer to finish by opening a PR (or pushing its branch if it can't).
+   destination, pointer to the base-committed story extract, scope, preserve,
+   verify, done/stop — target ≤1,600 characters, with the full plan linked
+   only for surrounding context. The goal names the worktree as the working
+   directory and instructs the implementer to finish by opening a PR (or
+   pushing its branch if it can't).
    Pick the lane by the **routing table** in
    [references/parallel-dispatch.md](references/parallel-dispatch.md) — the
    story's Complexity rating × the repo's `modelRoutingProfile` decides model
@@ -122,6 +127,12 @@ Repeat until done:
    The contract is what matters: one whole story, one agent, one worktree,
    explicit verification, no scope beyond the story.
 
+   Append a local `dispatch` event with this skill's
+   `scripts/metrics_ledger.py`: bead, lane, model, tier, effort, Complexity,
+   Risk, and the resolved contract. Capture is advisory and must never block
+   dispatch; the append command warns and exits successfully if it cannot
+   write.
+
 3. **Verify — never on trust.** When the implementer reports done, run the
    story's verification yourself *inside the story's worktree*: the plan's
    exact commands, affected tests, lint/build, and dev-browser evidence
@@ -130,7 +141,14 @@ Repeat until done:
    step 5). Check the diff for scope violations — files
    outside the story's scope, deleted tests, weakened assertions, and any
    change outside the worktree (there must be none; the coordinator checkout
-   must still be clean on main). Gates failing → bounce straight back to the
+   must still be clean on main). In the same pass, re-check the **actual diff**
+   against the mandatory-review trigger list: authentication/authorisation,
+   secrets/exposure, destructive or canonical state, money or human/commercial
+   gates, concurrency/idempotency/recovery/cross-tenant behaviour, and
+   architecture/security boundaries. A touched trigger escalates to full
+   independent review under every profile even when the planned Risk said
+   `routine`; the diff, not the label, is authoritative. Gates failing →
+   bounce straight back to the
    implementer with the failing output appended to the goal; don't spend a
    review on work that doesn't pass the machines.
 
@@ -153,14 +171,26 @@ Repeat until done:
    a real-integration criterion; real-vendor evidence cannot replace the
    deterministic local gate.
 
-4. **Review when the contract requires it — bounded, then done.** Once gates
-   pass, apply the review decision before merge. Independent review is
-   mandatory for every standard and assured story, and in every profile when
-   Risk is `mandatory-review` because the change touches authentication,
-   authorisation, secrets/exposure, destructive or canonical state, money or
-   human/commercial gates, concurrency/idempotency/recovery/cross-tenant
-   behaviour, or an architecture/security boundary. Ensure that story is a PR
-   and put it through the review protocol in
+   Append a `gate_pass` or `gate_fail` event for every gate run, including
+   duration. A story bounced twice before passing leaves three events.
+
+4. **Review — route by assurance × risk, bounded, then done.** Once gates
+   pass, resolve the delivery contract and apply this table:
+
+   - `Risk: mandatory-review` → full independent review under every profile.
+   - `Risk: routine` under `standard` or `assured` → full independent review.
+   - `Risk: routine` under `rapid` → coordinator verification plus
+     deterministic spot sampling. A valid `spotReviewRate: N` (integer 3–10)
+     selects every Nth eligible story in dispatch order for full independent
+     review. Missing or invalid N means every story receives full review.
+
+   The verify-time diff re-check overrides the planned label. Sampling changes
+   which routine rapid stories are reviewed, never how review works; the
+   trigger list, highest-capability reviewer floor, promotion review, and
+   packet integrity are untunable. Record sampled/unsampled in the story bead.
+
+   For every story routed to independent review, ensure it is a PR and put it
+   through the review protocol in
    [references/review-protocol.md](references/review-protocol.md): an
    independent reviewer — a **fresh agent session** with none of the
    implementer's context (the same human, subscription, and model are fine;
@@ -180,11 +210,11 @@ Repeat until done:
    park the story with its rework bead open. Non-blockers never block — they
    land as P2/P3 issues or PR notes and the review is still a pass.
 
-   A routine, reversible rapid story may use coordinator verification without
-   an independent packet. Record the `routine` classification, why no trigger
-   applies, commands/evidence checked, exact head, and any known issue links in
-   the story bead. Several small routine issues may be batched into one
-   iteration slice, but batching never hides a trigger or widens scope.
+   Append one `review` event per independent round with round/type/verdict,
+   blocker/non-blocker counts, reviewer lane, and reviewed head. For an
+   unsampled routine rapid story, record coordinator verification in the bead
+   rather than inventing a review event. Several small routine issues may be
+   batched, but batching never hides a trigger or widens scope.
 
 5. **Accept or park.**
    - **Accept:** merge the PR per the repo's process. For standard and assured,
@@ -197,17 +227,22 @@ Repeat until done:
      `git worktree remove .worktrees/<slug>`, delete the local branch. Close
      the story bead with evidence (commands run, results, evidence paths, PR
      link, review rounds used), tick the criteria it covers in the plan's
-     coverage table.
+     coverage table. Append a `close` event with outcome `merged`.
    - **Park** (verification bounced 3×, or review cap hit): push the branch
      so the state is safe on the remote, remove the worktree, and record the
      branch name in the bead — unparking recreates the worktree from the
-     branch. Log it, move to the next ready story — do not grind.
+     branch. Append a `close` event with outcome `parked`. Log it, move to the
+     next ready story — do not grind.
 
 6. **Checkpoint.** After every story: commit and push (if the repo syncs),
    append one entry to `docs/log.md` (what shipped, evidence, decisions made),
    and refresh the short current-state block at the top of the plan doc. The
    next agent — or you after a compaction — must be able to resume from files
    alone.
+
+   Run `metrics_ledger.py check` and `rollup` at checkpoints. Both are offline:
+   the append-only `.factory/metrics.jsonl` and derived JSON stay local to the
+   repo and never depend on a database, dashboard, or network service.
 
    Treat a real-vendor observation as durable product learning: record it in
    the host repo's vendor/contract evidence, update the simulator in the same
@@ -244,27 +279,18 @@ the coordinator's integrated risk check. Rapid must raise assurance and
 re-plan before public, irreversible, operational-without-recovery, or
 canonical promotion.
 
-- **Drain standard/assured findings continuously.** A free lane with no ready story is a drain
-  opportunity: batch open finding beads into a bounded sweep story (same
-  scope discipline, safety valve on money paths) and dispatch it through the
-  normal loop — verify, review, merge. Don't let the debt pile up for a
-  big-bang drain at the end.
-- **Gate the standard/assured promotion PR.** Before pushing the PR that promotes the
-  integration branch to main — or before declaring the run done when main
-  *is* the integration branch — every finding bead opened during the run must
-  be **closed** (fixed by dispatched implementer agents through the
-  normal verify + review loop) or **explicitly waived by the human**. Fixing
-  is the default; waiving is the operator's decision, never an agent's. A
-  requirement-traced finding may be fixed or explicitly accepted by the
-  operator; there is no peer or alternate-host waiver path.
+- **Drain standard/assured findings continuously.** Batch them into bounded
+  sweep stories and run the normal verify/review/merge loop.
+- **Gate standard/assured promotion.** Every finding opened during the run is
+  closed or explicitly waived by the operator before promotion/done. Fixing
+  is the default; no peer or alternate-host waiver path exists.
 - **Disclose what remains.** The promotion PR body lists every waived bead
   with a one-line risk statement. An outside reviewer should be able to
   rediscover nothing the factory already knows.
-- **Review the standard/assured union.** The promotion diff — everything since main diverged —
-  gets one independent review at the same bar as story reviews
-  ([references/review-protocol.md](references/review-protocol.md)). Merged
-  stories interact in ways no per-story review saw: shared-file unions,
-  cross-module reachability, contract drift between stories.
+- **Review the standard/assured union.** Independently review the promotion
+  diff at the story-review bar; merged stories can interact in ways no
+  per-story review saw
+  ([references/review-protocol.md](references/review-protocol.md)).
 
 ## Worktree Rules
 
@@ -288,28 +314,20 @@ gone wrong.
 
 ## Lanes & Capacity
 
-Parallelism and its governors live in
-[references/parallel-dispatch.md](references/parallel-dispatch.md); the
-invariants:
+The hot rules live in
+[references/parallel-dispatch.md](references/parallel-dispatch.md);
+operations in
+[references/dispatch-operations.md](references/dispatch-operations.md);
+leases/gates in
+[references/dispatch-resources.md](references/dispatch-resources.md).
 
-- Two governors gate every dispatch: **LLM capacity** (the lane's provider
-  isn't cooling on usage limits) and **host capacity** (load, memory, disk
-  thresholds). Scale by not starting work — never by killing running work.
-- **Stories route by complexity, not habit:** the plan's Complexity rating ×
-  the repo's `modelRoutingProfile` selects lane tier and effort (routing table
-  in the reference). When independent review applies, the reviewer uses the
-  highest review-capable configured lane; no product/model name is assumed.
-- Subscriptions are shared with other hosts: a usage ledger
-  (`.factory/usage.jsonl`) paces dispatches, but live limit signals are the
-  truth. On a limit: mark the provider cooling, shift the queue to healthy
-  same-tier lanes; all lanes cooling → checkpoint and pause until a window
-  resets.
-- **Quality never downgrades.** Cooling never moves a story down a tier, and
-  high-complexity stories never leave the frontier tier — when no suitable
-  lane is available, the factory waits; it does not substitute.
-- Every story holds a resource lease (for example a port block and its own
-  datastore namespace or disposable instance) recorded in
-  `.worktrees/<slug>/.env.story` — granted at dispatch, dropped at retirement.
+- Provider health and host headroom both gate dispatch; scale by not starting,
+  never by killing work.
+- Complexity × `modelRoutingProfile` routes implementation; independent
+  review uses the strongest review-capable lane. Cooling never downgrades.
+- `.factory/metrics.jsonl` records local events; live limit signals remain
+  truth across hosts. Checkpoint and pause when no same-tier lane is healthy.
+- Every story holds explicit resource leases until retirement.
 
 ## Long-Run Discipline
 
@@ -371,6 +389,8 @@ invariants:
   the review is theater. Independence is a fresh session judging only the
   durable inputs — not a second human; equally, demanding a non-author human
   approval for routine story review is the same misreading inverted.
+- Trusting the planned Risk label after implementation. Re-check the diff and
+  escalate any trigger surface before applying rapid sampling.
 - Hand-writing or decorating a reviewer prompt. Review contracts freeze the
   plan-owned input paths before implementation; the packet tool and approved
   templates own all review prose and bytes after that point.

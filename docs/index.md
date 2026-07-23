@@ -16,6 +16,9 @@ page add or rename.
 ## Process
 
 - [CHANGELOG](../CHANGELOG.md) — released skill changes, newest first.
+- [i5 non-SD fold-back baseline](foldbacks/2026-07-23-i5-non-sd-foldback.md)
+  — pinned source/target, selected capability dispositions, HLS adaptations,
+  and explicit rejection boundary for future audits.
 - Work queue: `bd ready` (beads, embedded — see `skills/hls-beads/SKILL.md`).
 - Feedback intake: `.factory/feedback.json` → processed by
   `skills/hls-skill-sweep`.

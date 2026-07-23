@@ -9,6 +9,7 @@ status: draft | active | done
 operatingMode: supervised | autonomous
 modelRoutingProfile: quality | balanced | throughput
 assuranceProfile: rapid | standard | assured
+spotReviewRate: 3-10 | full-review
 releaseStage: experiment | beta | operational | canonical
 updated: YYYY-MM-DD
 ---

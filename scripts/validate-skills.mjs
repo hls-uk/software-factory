@@ -175,6 +175,10 @@ const deliveryInvariants = new Map([
   ["hls-plan-builder", ["first usable", "foundation-only", "mandatory-review"]],
   ["hls-factory-orchestrate", ["P0/P1", "P2/P3", "mandatory-review"]],
   ["hls-issue-iteration", ["GitHub Issues", "Beads", "user journey"]],
+  [
+    "hls-i5-foldback",
+    ["1d202c66f5fbc18add19531dd3f7f9db30744804", "port", "adapt", "present", "reject"],
+  ],
 ]);
 
 for (const [skill, phrases] of deliveryInvariants) {

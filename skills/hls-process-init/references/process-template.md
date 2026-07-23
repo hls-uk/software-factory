@@ -27,6 +27,8 @@ stops below.
   lanes; it does not grant autonomy or lower assurance.
 - **Assurance:** `<rapid | standard | assured>`; unknown defaults to
   `standard`.
+- **Rapid spot review:** `<N from 3–10, or full review>`; invalid or absent
+  means full independent review.
 - **Release stage:** `<experiment | beta | operational | canonical>`.
 - **Exposure / users:** <named private users, internal group, or public>.
 - **Data criticality:** <disposable, recoverable, authoritative, or canonical>.
@@ -95,6 +97,13 @@ parallel-safe (ports and connection strings from env only).
 
 Beads, embedded mode. `bd ready` is the queue; close with evidence.
 Intent lives in docs/requirements and docs/plans; beads carries readiness.
+The exact local writer/schema lives in `.factory/toolchain.json`; run the
+hls-beads toolchain checker before writes after a host or binary change. It
+checks local state only and provides no install, server, or sync authority.
+
+Execution events append to `.factory/metrics.jsonl`; checkpoint rollups are
+derived offline as JSON. Metrics failure never blocks delivery and no metrics
+server is required.
 
 ## Worktrees
 

@@ -1,22 +1,27 @@
 # Story Review Protocol
 
-Every story subject to this protocol lands as a PR and gets an independent
+Every story routed to this protocol lands as a PR and gets an independent
 review before merge. The protocol is designed to terminate: severity discipline stops nitpicking,
 delta-only follow-ups stop relitigating, and a hard round cap stops loops.
 All review prompts and verdict checks use the deterministic builder/verifier
 in [review-packets.md](review-packets.md); this file defines the fixed human
 review rules that its versioned templates encode.
 
-## Applicability
+## Applicability — assurance × risk
 
-Use this protocol for every standard and assured story. Under rapid, use it
-for any story or integrated slice touching authentication/authorisation,
-secrets/exposure, destructive or canonical state, money or human/commercial
-gates, concurrency/idempotency/recovery/cross-tenant behaviour, or an explicit
-architecture/security boundary. A routine reversible rapid story may instead
-use the coordinator evidence contract in the main skill. Once this protocol
-is invoked, its independence, packet, severity, and round-cap protections do
-not change with assurance profile.
+Resolve `.factory/agents.json` with this skill's
+`scripts/delivery_contract.py`; absent or invalid assurance reads `standard`.
+
+| `assuranceProfile` | `Risk: routine` | `Risk: mandatory-review` |
+|---|---|---|
+| `rapid` | coordinator verification plus deterministic 1-in-N sampling; valid `spotReviewRate` is 3–10 and absence means full review | full independent review |
+| `standard` | full independent review | full independent review |
+| `assured` | full independent review | full independent review |
+
+At verify time, re-check the diff against the mandatory-review trigger list.
+A trigger touched by the diff forces this protocol under every profile,
+whatever the planned label. Once invoked, independence, packet, severity, and
+round-cap protections never thin. Sampling never applies to promotion review.
 
 ## Roles
 

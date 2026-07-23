@@ -26,7 +26,12 @@ instructions. Never prefix or append coordinator commentary when dispatching
 Create the contract while cutting the story, commit it to the integration
 base, then branch the story. Copy paths from the plan and its evidence-input
 list; do not reinterpret that list at review time. Contract inputs must be in
-the role/path order shown below.
+the role/path order shown below. The same freeze commit carries the story's
+handoff extract `.factory/reviews/<review-id>.story.md`
+([goal-handoff-template.md](goal-handoff-template.md)). It is what the
+implementer reads and its bytes are auditable against the plan, but it is
+**not** a packet input: the reviewer receives the whole named story,
+criteria, and spec files, and the builder accepts nothing else.
 
 Story contract:
 

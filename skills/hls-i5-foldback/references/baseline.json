@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "incept5/i5-software-factory",
+    "pathHint": "../../incept5/i5-software-factory",
+    "commit": "1d202c66f5fbc18add19531dd3f7f9db30744804"
+  },
+  "target": {
+    "repository": "hls-uk/software-factory",
+    "preFoldbackCommit": "cfd59a564e60fe3ed613fef26164daf07c6cdfbe",
+    "operatorModel": "single-operator-multi-host"
+  },
+  "auditUnit": "commit-path",
+  "dispositions": [
+    "port",
+    "adapt",
+    "present",
+    "reject"
+  ],
+  "selectedAreas": {
+    "CE": {
+      "name": "context-efficiency-p0-p4",
+      "pathTerms": [
+        "factory-orchestrate",
+        "harness-clis",
+        "context-baseline",
+        "context-efficiency"
+      ],
+      "messageTerms": [
+        "context",
+        "handoff",
+        "mcp"
+      ]
+    },
+    "RH": {
+      "name": "rapid-hardening",
+      "pathTerms": [
+        "requirements-interview",
+        "plan-builder",
+        "factory-orchestrate",
+        "process-init",
+        "delivery-contract"
+      ],
+      "messageTerms": [
+        "rapid",
+        "risk",
+        "sampling",
+        "delivery contract"
+      ]
+    },
+    "LM": {
+      "name": "local-metrics",
+      "pathTerms": [
+        "metrics",
+        "factory-orchestrate",
+        "process-init"
+      ],
+      "messageTerms": [
+        "metrics",
+        "ledger",
+        "rollup"
+      ]
+    },
+    "TC": {
+      "name": "embedded-toolchain",
+      "pathTerms": [
+        "i5-beads",
+        "toolchain",
+        "process-init"
+      ],
+      "messageTerms": [
+        "toolchain",
+        "beads version",
+        "embedded"
+      ]
+    },
+    "GLM": {
+      "name": "optional-glm52-claude-harness",
+      "pathTerms": [
+        "harness-clis",
+        "factory-orchestrate"
+      ],
+      "messageTerms": [
+        "glm",
+        "z.ai",
+        "claude harness"
+      ]
+    }
+  },
+  "initialFoldback": [
+    {
+      "area": "CE",
+      "disposition": "adapt",
+      "evidence": [
+        "skills/hls-factory-orchestrate/scripts/context_baseline.py",
+        "skills/hls-factory-orchestrate/references/dispatch-operations.md",
+        "skills/hls-factory-orchestrate/references/dispatch-resources.md"
+      ]
+    },
+    {
+      "area": "RH",
+      "disposition": "adapt",
+      "evidence": [
+        "skills/hls-factory-orchestrate/scripts/delivery_contract.py",
+        "skills/hls-factory-orchestrate/references/review-protocol.md"
+      ]
+    },
+    {
+      "area": "LM",
+      "disposition": "adapt",
+      "evidence": [
+        "skills/hls-factory-orchestrate/scripts/metrics_ledger.py"
+      ]
+    },
+    {
+      "area": "TC",
+      "disposition": "adapt",
+      "evidence": [
+        "skills/hls-beads/scripts/check-toolchain.py",
+        "skills/hls-beads/references/version-policy.md"
+      ]
+    },
+    {
+      "area": "GLM",
+      "disposition": "adapt",
+      "evidence": [
+        "skills/hls-tech-playbook/references/harness-clis.md"
+      ]
+    }
+  ],
+  "excludedCapabilities": [
+    "SD",
+    "shared Dolt server",
+    "Tailscale",
+    "AWS",
+    "RBAC",
+    "team onboarding",
+    "team administration",
+    "central dashboard",
+    "control-plane coordination",
+    "incomplete auto-tune"
+  ]
+}
